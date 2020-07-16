@@ -26,7 +26,7 @@ services:
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/3845242a0cbee6bf25a3682a0920fb985661d89197faaca29baeedaf24d91e03_sk
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/3845242a0cbee6bf25a3682a0920fb985661d89197faaca29baeedaf24d91e03_sk  -b admin:adminpw -d'
     volumes:
-      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+      - ../crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca1
     deploy:
             mode: replicated
@@ -59,7 +59,7 @@ services:
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/f5bcf743239c5ac2ae9c02671a7e920fcf91bdbc6dbbd0b497f062738e141983_sk
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/f5bcf743239c5ac2ae9c02671a7e920fcf91bdbc6dbbd0b497f062738e141983_sk  -b admin:adminpw -d'
     volumes:
-      - ./crypto-config/peerOrganizations/org2.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+      - ../crypto-config/peerOrganizations/org2.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca2
     deploy:
             mode: replicated
