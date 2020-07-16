@@ -57,7 +57,7 @@ services:
               condition: on-failure
             placement:
                 constraints:
-                    - node.hostname == $ORG1_HOSTNAME 
+                    - node.hostname == $ORDERER2_HOSTNAME 
 
     ports:
       - published: 8050
