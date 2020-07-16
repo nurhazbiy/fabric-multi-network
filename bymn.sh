@@ -31,19 +31,19 @@
 export PATH=${PWD}/../fabric-samples/bin:${PWD}:$PATH
 export FABRIC_CFG_PATH=${PWD}
 export VERBOSE=false
-export ORDERER0_HOSTNAME="orderer-duplicate"
-export ORDERER1_HOSTNAME="arete"
-export ORG1_HOSTNAME="org1"
-export ORG2_HOSTNAME="org2"
-export SWARM_NETWORK="fabric"
-export DOCKER_STACK="fabric"
-export KAFKA0_HOSTNAME="orderer-duplicate"
-export KAFKA1_HOSTNAME="org1"
-export KAFKA2_HOSTNAME="org2"
-export KAFKA3_HOSTNAME="arete"
-export ZK0_HOSTNAME="orderer-duplicate"
-export ZK1_HOSTNAME="org1"
-export ZK2_HOSTNAME="org2"
+export ORDERER0_HOSTNAME="orderer"
+export ORDERER1_HOSTNAME="orderer"
+export ORG1_HOSTNAME="supplier"
+export ORG2_HOSTNAME="manufacturer"
+export SWARM_NETWORK="supplier"
+export DOCKER_STACK="supplier"
+export KAFKA0_HOSTNAME="orderer"
+export KAFKA1_HOSTNAME="orderer"
+export KAFKA2_HOSTNAME="orderer"
+export KAFKA3_HOSTNAME="orderer"
+export ZK0_HOSTNAME="orderer"
+export ZK1_HOSTNAME="orderer"
+export ZK2_HOSTNAME="orderer"
 SYS_CHANNEL="bymn-sys-channel"
 
 # Print the usage message
@@ -244,7 +244,7 @@ function networkDown() {
    docker system prune
    docker volume prune
    #docker swarm leave -f
-   docker rmi $(docker images -a -q) -f
+  #  docker rmi $(docker images -a -q) -f
    docker rm $(docker ps -aq) -f
    
   fi
@@ -480,7 +480,7 @@ COMPOSE_FILE_ORG3=docker-compose-org3.yaml
 # use golang as the default language for chaincode
 LANGUAGE=golang
 # default image tag
-IMAGETAG="latest"
+IMAGETAG="1.4.6"
 # default consensus type
 CONSENSUS_TYPE="solo"
 
