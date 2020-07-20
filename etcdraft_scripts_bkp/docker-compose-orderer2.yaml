@@ -11,7 +11,7 @@
 version: '3.4'
 
 volumes:
-  orderer4.example.com:
+  orderer2.example.com:
   
 networks:
   bymn:
@@ -19,7 +19,7 @@ networks:
       name: $SWARM_NETWORK
 
 services:
-  orderer4:
+  orderer2:
     image: hyperledger/fabric-orderer:$IMAGE_TAG
     environment:
       - ORDERER_GENERAL_LOGLEVEL=DEBUG
@@ -37,14 +37,19 @@ services:
       - ORDERER_KAFKA_VERBOSE=true
       - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
       - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
-      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]      
+      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      #kafka
+      - ORDERER_KAFKA_RETRY_SHORTINTERVAL=1s
+      - ORDERER_KAFKA_RETRY_SHORTTOTAL=30s
+      #- ORDERER_KAFKA_VERSION=2.0
+
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: orderer
     volumes:
     - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
-    - ../crypto-config/ordererOrganizations/example.com/orderers/orderer4.example.com/msp:/var/hyperledger/orderer/msp
-    - ../crypto-config/ordererOrganizations/example.com/orderers/orderer4.example.com/tls/:/var/hyperledger/orderer/tls
-    - orderer4.example.com:/var/hyperledger/production/orderer
+    - ../crypto-config/ordererOrganizations/example.com/orderers/orderer2.example.com/msp:/var/hyperledger/orderer/msp
+    - ../crypto-config/ordererOrganizations/example.com/orderers/orderer2.example.com/tls/:/var/hyperledger/orderer/tls
+    - orderer2.example.com:/var/hyperledger/production/orderer
     deploy:
             mode: replicated
             replicas: 1
@@ -52,14 +57,14 @@ services:
               condition: on-failure
             placement:
                 constraints:
-                    - node.hostname == $ORDERER3_HOSTNAME 
+                    - node.hostname == $ORDERER2_HOSTNAME 
 
     ports:
-      - published: 7050
+      - published: 9050
         target: 7050
         mode: host
     networks:
       bymn:
         aliases:
-          - orderer4.example.com
+          - orderer2.example.com
            

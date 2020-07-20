@@ -246,6 +246,36 @@ Orderer: &OrdererDefaults
         Brokers:
             - 127.0.0.1:9092
 
+    EtcdRaft:
+        Consenters:
+        - Host: orderer0.workspace
+          Port: 7050
+          ClientTLSCert: crypto-config/ordererOrganizations/workspace/orderers/orderer0.workspace/tls/server.crt
+          ServerTLSCert: crypto-config/ordererOrganizations/workspace/orderers/orderer0.workspace/tls/server.crt
+        - Host: orderer1.workspace
+          Port: 7050
+          ClientTLSCert: crypto-config/ordererOrganizations/workspace/orderers/orderer1.workspace/tls/server.crt
+          ServerTLSCert: crypto-config/ordererOrganizations/workspace/orderers/orderer1.workspace/tls/server.crt
+        - Host: orderer2.workspace
+          Port: 7050
+          ClientTLSCert: crypto-config/ordererOrganizations/workspace/orderers/orderer2.workspace/tls/server.crt
+          ServerTLSCert: crypto-config/ordererOrganizations/workspace/orderers/orderer2.workspace/tls/server.crt
+        # - Host: orderer4.workspace
+        #   Port: 7050
+        #   ClientTLSCert: crypto-config/ordererOrganizations/workspace/orderers/orderer4.workspace/tls/server.crt
+        #   ServerTLSCert: crypto-config/ordererOrganizations/workspace/orderers/orderer4.workspace/tls/server.crt
+        # - Host: orderer5.workspace
+        #   Port: 7050
+        #   ClientTLSCert: crypto-config/ordererOrganizations/workspace/orderers/orderer5.workspace/tls/server.crt
+        #   ServerTLSCert: crypto-config/ordererOrganizations/workspace/orderers/orderer5.workspace/tls/server.crt
+    Addresses:
+        - orderer0.workspace:7050
+        - orderer1.workspace:7050
+        - orderer2.workspace:7050
+        # - orderer4.workspace:7050
+        # - orderer5.workspace:7050
+    # Ending Raft
+
     # Organizations is the list of orgs which are defined as participants on
     # the orderer side of the network
     Organizations:
@@ -373,28 +403,28 @@ Profiles:
                   Port: 7050
                   ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer0.example.com/tls/server.crt
                   ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer0.example.com/tls/server.crt
+                - Host: orderer1.example.com
+                  Port: 7050
+                  ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer1.example.com/tls/server.crt
+                  ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer1.example.com/tls/server.crt
                 - Host: orderer2.example.com
                   Port: 7050
                   ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer2.example.com/tls/server.crt
                   ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer2.example.com/tls/server.crt
-                - Host: orderer3.example.com
-                  Port: 8050
-                  ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer3.example.com/tls/server.crt
-                  ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer3.example.com/tls/server.crt
-                - Host: orderer4.example.com
-                  Port: 7050
-                  ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer4.example.com/tls/server.crt
-                  ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer4.example.com/tls/server.crt
-                - Host: orderer5.example.com
-                  Port: 8050
-                  ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer5.example.com/tls/server.crt
-                  ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer5.example.com/tls/server.crt
+                # - Host: orderer4.example.com
+                #   Port: 7050
+                #   ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer4.example.com/tls/server.crt
+                #   ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer4.example.com/tls/server.crt
+                # - Host: orderer5.example.com
+                #   Port: 8050
+                #   ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer5.example.com/tls/server.crt
+                #   ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer5.example.com/tls/server.crt
             Addresses:
                 - orderer0.example.com:7050
+                - orderer1.example.com:7050
                 - orderer2.example.com:7050
-                - orderer3.example.com:8050
-                - orderer4.example.com:7050
-                - orderer5.example.com:8050
+                # - orderer4.example.com:7050
+                # - orderer5.example.com:8050
 
             Organizations:
             - *OrdererOrg
