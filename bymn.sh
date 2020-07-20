@@ -31,23 +31,24 @@
 export PATH=${PWD}/../fabric-samples/bin:${PWD}:$PATH
 export FABRIC_CFG_PATH=${PWD}
 export VERBOSE=false
-export ORDERER0_HOSTNAME="orderer"
-export ORDERER1_HOSTNAME="orderer"
-export ORDERER2_HOSTNAME="orderer"
-export ORDERER3_HOSTNAME="orderer"
-export ORDERER4_HOSTNAME="orderer"
-export ORG1_HOSTNAME="supplier"
-export ORG2_HOSTNAME="manufacturer"
+export ORDERER0_HOSTNAME="docker-desktop"
+export ORDERER1_HOSTNAME="docker-desktop"
+export ORDERER2_HOSTNAME="docker-desktop"
+export ORDERER3_HOSTNAME="docker-desktop"
+export ORDERER4_HOSTNAME="docker-desktop"
+export ORG1_HOSTNAME="docker-desktop"
+export ORG2_HOSTNAME="docker-desktop"
 export SWARM_NETWORK="fabric"
 export DOCKER_STACK="fabric"
-export KAFKA0_HOSTNAME="orderer"
-export KAFKA1_HOSTNAME="orderer"
-export KAFKA2_HOSTNAME="orderer"
-export KAFKA3_HOSTNAME="orderer"
-export ZK0_HOSTNAME="orderer"
-export ZK1_HOSTNAME="orderer"
-export ZK2_HOSTNAME="orderer"
+export KAFKA0_HOSTNAME="docker-desktop"
+export KAFKA1_HOSTNAME="docker-desktop"
+export KAFKA2_HOSTNAME="docker-desktop"
+export KAFKA3_HOSTNAME="docker-desktop"
+export ZK0_HOSTNAME="docker-desktop"
+export ZK1_HOSTNAME="docker-desktop"
+export ZK2_HOSTNAME="docker-desktop"
 SYS_CHANNEL="bymn-sys-channel"
+
 
 # Print the usage message
 function printHelp() {
@@ -171,6 +172,9 @@ function networkUp() {
     replacePrivateKey
     generateChannelArtifacts
   fi
+  
+  docker network create --attachable --driver overlay fabric
+  
   CURRENT_DIR=$PWD
   ZK_DIR=$PWD/zk_scripts
   if [ "${CONSENSUS_TYPE}" == "kafka" ]; then
@@ -216,7 +220,7 @@ function startDockerServices(){
 function execCli() {
   checkPrereqs
   
-  docker exec org1cli scripts/script.sh $CHANNEL_NAME $CLI_DELAY $LANGUAGE $CLI_TIMEOUT $VERBOSE
+  docker exec $(docker ps --filter "name=org1cli" -aq) scripts/script.sh $CHANNEL_NAME $CLI_DELAY $LANGUAGE $CLI_TIMEOUT $VERBOSE
   if [ $? -ne 0 ]; then
     echo "ERROR !!!! Test failed"
     exit 1
@@ -244,11 +248,12 @@ function networkDown() {
     #rm -rf channel-artifacts/*.block channel-artifacts/*.tx crypto-config ./org3-artifacts/crypto-config/ channel-artifacts/org3.json
     # remove the docker-compose yaml file that was customized to the example
     #rm -f docker-compose-ca.yaml
-   docker system prune
-   docker volume prune
+    docker system prune
+    docker volume prune
    #docker swarm leave -f
   #  docker rmi $(docker images -a -q) -f
-   docker rm $(docker ps -aq) -f
+    docker service rm $(docker service ls -q)               
+    docker rm $(docker ps -aq) -f
    
   fi
 }
@@ -284,7 +289,7 @@ function replacePrivateKey() {
   sed $OPTS "s/CA2_PRIVATE_KEY/${PRIV_KEY}/g" ca_scripts/docker-compose-ca.yaml
   # If MacOSX, remove the temporary backup of the docker-compose file
   if [ "$ARCH" == "Darwin" ]; then
-    rm docker-compose-ca.yamlt
+    rm ./ca_scripts/docker-compose-ca.yamlt
     
   fi
 }
@@ -447,6 +452,7 @@ function generateChannelArtifacts() {
   echo
 }
 
+
   #echo
   #echo "#################################################################"
   #echo "#######    Generating anchor peer update for Org2MSP   ##########"
@@ -461,6 +467,62 @@ function generateChannelArtifacts() {
   #  exit 1
   #fi
   #echo
+
+
+function runCaliper() {
+  # sed on MacOSX does not support -i flag with a null extension. We will use
+  # 't' for our back-up's extension and delete it at the end of the function
+  ARCH=$(uname -s | grep Darwin)
+  if [ "$ARCH" == "Darwin" ]; then
+    OPTS="-it"
+  else
+    OPTS="-i"
+  fi
+
+  cp docker-compose-caliper-template.yaml docker-compose-caliper.yaml
+
+  # The next steps will replace the template's contents with the
+  # actual values of the private key file names for the two CAs.
+  CURRENT_DIR=$PWD
+
+  cd crypto-config/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore/
+  PRIV_KEY=$(ls *_sk)
+  cd "$CURRENT_DIR"
+  sed $OPTS "s/C1_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-caliper.yaml
+
+  cd crypto-config/peerOrganizations/org2.example.com/users/User1@org2.example.com/msp/keystore/
+  PRIV_KEY=$(ls *_sk)
+  cd "$CURRENT_DIR"
+  sed $OPTS "s/C2_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-caliper.yaml
+
+  # cd crypto-config/peerOrganizations/customer.example.com/users/User1@customer.example.com/msp/keystore/
+  # PRIV_KEY=$(ls *_sk)
+  # cd "$CURRENT_DIR"
+  # sed $OPTS "s/C3_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-caliper.yaml
+
+  cd crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/
+  PRIV_KEY=$(ls *_sk)
+  cd "$CURRENT_DIR"
+  sed $OPTS "s/A1_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-caliper.yaml
+
+  cd crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore/
+  PRIV_KEY=$(ls *_sk)
+  cd "$CURRENT_DIR"
+  sed $OPTS "s/A2_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-caliper.yaml
+
+  # cd crypto-config/peerOrganizations/customer.example.com/users/Admin@customer.example.com/msp/keystore/
+  # PRIV_KEY=$(ls *_sk)
+  # cd "$CURRENT_DIR"
+  # sed $OPTS "s/A3_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-caliper.yaml
+  
+  # If MacOSX, remove the temporary backup of the docker-compose file
+  if [ "$ARCH" == "Darwin" ]; then
+    rm docker-compose-caliper.yamlt
+  fi
+
+  export CALIPER_FABRIC_SKIPCREATECHANNEL_MYCHANNEL=true
+  npx caliper launch master --caliper-bind-sut fabric:1.4.6 --caliper-workspace . --caliper-benchconfig ./benchmarks/samples/fabric/marbles/config.yaml  --caliper-networkconfig docker-compose-caliper.yaml
+}
 
 
 # Obtain the OS and Architecture string that will be used to select the correct
@@ -506,6 +568,8 @@ elif [ "$MODE" == "upgrade" ]; then
   EXPMODE="Upgrading the network"
 elif [ "$MODE" == "execcli" ]; then
   EXPMODE="Executing Cli scripts"
+elif [ "$MODE" == "caliper" ]; then
+  EXPMODE="Starting Caliper"
 else
   printHelp
   exit 1
@@ -552,7 +616,6 @@ while getopts "h?c:t:d:f:s:l:i:v:o:a" opt; do
   esac
 done
 
-
 # Announce what was requested
 
 if [ "${IF_COUCHDB}" == "couchdb" ]; then
@@ -576,6 +639,8 @@ elif [ "${MODE}" == "generate" ]; then ## Generate Artifacts
 elif [ "${MODE}" == "restart" ]; then ## Restart the network
   networkDown
   networkUp
+elif [ "${MODE}" == "caliper" ]; then ## Start Caliper
+  runCaliper
 elif [ "${MODE}" == "upgrade" ]; then ## Upgrade the network from version 1.1.x to 1.2.x
   upgradeNetwork
 elif [ "${MODE}" == "execcli" ]; then ## execute cli scripts

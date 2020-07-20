@@ -1,0 +1,252 @@
+name: Fabric
+version: "1.0"
+mutual-tls: false
+
+caliper:
+  blockchain: fabric
+  command:
+    start: export FABRIC_VERSION=1.4.6
+    end: export FABRIC_VERSION=1.4.6
+    # start: export FABRIC_VERSION=1.4.6;export FABRIC_CA_VERSION=1.4.6;docker-compose -f docker-compose.yaml up -d;sleep 10s
+    # end: docker-compose -f docker-compose.yaml down;(test -z \"$(docker ps -aq)\") || docker rm $(docker ps -aq);(test -z \"$(docker images dev* -q)\") || docker rmi $(docker images dev* -q);rm -rf /tmp/hfc-*
+
+info:
+  Version: 2.0.0
+  Size: 3 Orgs with 2 Peer
+  Orderer: Raft
+  Distribution: Single Host
+  StateDB: LevelDB
+
+clients:
+  client0.org1.example.com:
+    client:
+      organization: Org1
+      credentialStore:
+        path: /tmp/hfc-kvs/org1
+        cryptoStore:
+          path: /tmp/hfc-cvs/org1
+      clientPrivateKey:
+        path: crypto-config/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore/c12e31b58a3711d38d873fa6d0c9825516d109a310d44ee77e3271088a0f6c2a_sk
+      clientSignedCert:
+        path: crypto-config/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/signcerts/User1@org1.example.com-cert.pem
+
+  client0.org2.example.com:
+    client:
+      organization: Org2
+      credentialStore:
+        path: /tmp/hfc-kvs/org2
+        cryptoStore:
+          path: /tmp/hfc-cvs/org2
+      clientPrivateKey:
+        path: crypto-config/peerOrganizations/org2.example.com/users/User1@org2.example.com/msp/keystore/0a34eaa7d0194b65f9291a5d198d047adcdc5d0d8e2d4d89cf423ae87bd03fa2_sk
+      clientSignedCert:
+        path: crypto-config/peerOrganizations/org2.example.com/users/User1@org2.example.com/msp/signcerts/User1@org2.example.com-cert.pem
+  
+  # client0.customer.example.com:
+  #   client:
+  #     organization: Customer
+  #     credentialStore:
+  #       path: /tmp/hfc-kvs/org3
+  #       cryptoStore:
+  #         path: /tmp/hfc-cvs/Customer
+  #     clientPrivateKey:
+  #       path: crypto-config/peerOrganizations/customer.example.com/users/User1@customer.example.com/msp/keystore/C3_PRIVATE_KEY
+  #     clientSignedCert:
+  #       path: crypto-config/peerOrganizations/customer.example.com/users/User1@customer.example.com/msp/signcerts/User1@customer.example.com-cert.pem
+  
+channels:
+  mychannel:
+    configBinary: ./channel-artifacts/channel.tx
+    created: false
+    orderers:
+    - orderer0.example.com
+    - orderer1.example.com
+    - orderer2.example.com
+    # - orderer4.example.com
+    # - orderer5.example.com
+    peers:
+      peer0.org1.example.com:
+        eventSource: true
+      peer1.org1.example.com:
+        eventSource: true
+      peer0.org2.example.com:
+        eventSource: true
+      peer1.org2.example.com:
+        eventSource: true
+      # peer0.customer.example.com:
+      #   eventSource: true
+      # peer1.customer.example.com:
+      #   eventSource: true
+
+    chaincodes:
+    # - id: chaincode_example02
+    #   version: v0
+    #   language: golang
+    #   path: chaincode_example02/go/
+      # metadataPath: src/fabric/samples/marbles/go/metadata
+    - id: marbles
+      version: v0
+      language: golang
+      path: fabric/samples/marbles/go
+      metadataPath: src/fabric/samples/marbles/go/metadata
+    # - id: drm
+    #   version: v0
+    #   language: golang
+    #   path: fabric/scenario/drm/go
+    # - id: simple
+    #   version: v0
+    #   language: golang
+    #   path: fabric/scenario/simple/go
+    # - id: smallbank
+    #   version: v0
+    #   language: golang
+    #   path: fabric/scenario/smallbank/go
+
+organizations:
+  Org1:
+    mspid: Org1MSP
+    peers:
+    - peer0.org1.example.com
+    - peer1.org1.example.com
+    certificateAuthorities:
+    - ca.org1.example.com
+    adminPrivateKey:
+      path: crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/221544cefab70d0b8eb50e9601c93bc186e948f1926e4d762ad6f2db66cefef1_sk
+    signedCert:
+      path: crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem
+
+  Org2:
+    mspid: Org2MSP
+    peers:
+    - peer0.org2.example.com
+    - peer1.org2.example.com
+    certificateAuthorities:
+    - ca.org2.example.com
+    adminPrivateKey:
+      path: crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore/d57395592a629b3deb350f2e0f41e14cde373a6eead38e0f07f56bc30661f94c_sk
+    signedCert:
+      path: crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/signcerts/Admin@org2.example.com-cert.pem
+
+  # Customer:
+  #   mspid: CustomerMSP
+  #   peers:
+  #   - peer0.customer.example.com
+  #   - peer1.customer.example.com
+  #   certificateAuthorities:
+  #   - ca_customer
+  #   adminPrivateKey:
+  #     path: crypto-config/peerOrganizations/customer.example.com/users/Admin@customer.example.com/msp/keystore/A3_PRIVATE_KEY
+  #   signedCert:
+  #     path: crypto-config/peerOrganizations/customer.example.com/users/Admin@customer.example.com/msp/signcerts/Admin@customer.example.com-cert.pem
+
+orderers:
+  orderer0.example.com:
+    url: grpcs://localhost:7050
+    grpcOptions:
+      ssl-target-name-override: orderer0.example.com
+    tlsCACerts:
+        path: crypto-config/ordererOrganizations/example.com/orderers/orderer0.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+  orderer1.example.com:
+    url: grpcs://localhost:8050
+    grpcOptions:
+      ssl-target-name-override: orderer1.example.com
+    tlsCACerts:
+        path: crypto-config/ordererOrganizations/example.com/orderers/orderer1.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+  orderer2.example.com:
+    url: grpcs://localhost:9050
+    grpcOptions:
+      ssl-target-name-override: orderer2.example.com
+    tlsCACerts:
+        path: crypto-config/ordererOrganizations/example.com/orderers/orderer2.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+  # orderer4.example.com:
+  #   url: grpcs://localhost:10050
+  #   grpcOptions:
+  #     ssl-target-name-override: orderer4.example.com
+  #   tlsCACerts:
+  #       path: crypto-config/ordererOrganizations/example.com/orderers/orderer4.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+  # orderer5.example.com:
+  #   url: grpcs://localhost:11050
+  #   grpcOptions:
+  #     ssl-target-name-override: orderer5.example.com
+  #   tlsCACerts:
+  #       path: crypto-config/ordererOrganizations/example.com/orderers/orderer5.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
+peers:
+  peer0.org1.example.com:
+    url: grpcs://localhost:7051
+    grpcOptions:
+      ssl-target-name-override: peer0.org1.example.com
+      grpc.keepalive_time_ms: 600000
+    tlsCACerts:
+        path: crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp/tlscacerts/tlsca.org1.example.com-cert.pem
+
+  peer0.org2.example.com:
+    url: grpcs://localhost:9051
+    grpcOptions:
+      ssl-target-name-override: peer0.org2.example.com
+      grpc.keepalive_time_ms: 600000
+    tlsCACerts:
+        path: crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/msp/tlscacerts/tlsca.org2.example.com-cert.pem
+
+  # peer0.customer.example.com:
+  #   url: grpcs://localhost:9051
+  #   grpcOptions:
+  #     ssl-target-name-override: peer0.customer.example.com
+  #     grpc.keepalive_time_ms: 600000
+  #   tlsCACerts:
+  #       path: crypto-config/peerOrganizations/customer.example.com/peers/peer0.customer.example.com/msp/tlscacerts/tlsca.customer.example.com-cert.pem
+
+  peer1.org1.example.com:
+    url: grpcs://localhost:8051
+    grpcOptions:
+      ssl-target-name-override: peer1.org1.example.com
+      grpc.keepalive_time_ms: 600000
+    tlsCACerts:
+        path: crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/msp/tlscacerts/tlsca.org1.example.com-cert.pem
+
+  peer1.org2.example.com:
+    url: grpcs://localhost:10051
+    grpcOptions:
+      ssl-target-name-override: peer1.org2.example.com
+      grpc.keepalive_time_ms: 600000
+    tlsCACerts:
+        path: crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/msp/tlscacerts/tlsca.org2.example.com-cert.pem
+
+  # peer1.customer.example.com:
+  #   url: grpcs://localhost:12051
+  #   grpcOptions:
+  #     ssl-target-name-override: peer1.customer.example.com
+  #     grpc.keepalive_time_ms: 600000
+  #   tlsCACerts:
+  #       path: crypto-config/peerOrganizations/customer.example.com/peers/peer1.customer.example.com/msp/tlscacerts/tlsca.customer.example.com-cert.pem
+
+certificateAuthorities:
+  ca.org1.example.com:
+    url: https://localhost:7054
+    httpOptions:
+      verify: false
+    tlsCACerts:
+        path: crypto-config/peerOrganizations/org1.example.com/ca/ca.org1.example.com-cert.pem
+    registrar:
+    - enrollId: admin
+      enrollSecret: adminpw
+
+  ca.org2.example.com:
+    url: https://localhost:8054
+    httpOptions:
+      verify: false
+    tlsCACerts:
+        path: crypto-config/peerOrganizations/org2.example.com/ca/ca.org2.example.com-cert.pem
+    registrar:
+    - enrollId: admin
+      enrollSecret: adminpw
+
+  # ca_customer:
+  #   url: https://localhost:11054
+  #   httpOptions:
+  #     verify: false
+  #   tlsCACerts:
+  #       path: crypto-config/peerOrganizations/customer.example.com/ca/ca.customer.example.com-cert.pem
+  #   registrar:
+  #   - enrollId: admin
+  #     enrollSecret: adminpw
