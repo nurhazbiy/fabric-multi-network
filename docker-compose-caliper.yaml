@@ -57,7 +57,7 @@ clients:
 channels:
   mychannel:
     configBinary: ./channel-artifacts/channel.tx
-    created: false
+    created: true
     orderers:
     - orderer0.workspace
     - orderer1.workspace
