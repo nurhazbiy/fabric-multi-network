@@ -153,6 +153,7 @@ instantiateChaincode() {
     set +x
   fi
   cat log.txt
+  sleep 10m
   verifyResult $res "Chaincode instantiation on peer${PEER}.org${ORG} on channel '$CHANNEL_NAME' failed"
   echo "===================== Chaincode is instantiated on peer${PEER}.org${ORG} on channel '$CHANNEL_NAME' ===================== "
   echo
