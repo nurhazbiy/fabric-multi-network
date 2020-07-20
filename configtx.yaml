@@ -268,10 +268,10 @@ Orderer: &OrdererDefaults
         #   Port: 7050
         #   ClientTLSCert: crypto-config/ordererOrganizations/workspace/orderers/orderer5.workspace/tls/server.crt
         #   ServerTLSCert: crypto-config/ordererOrganizations/workspace/orderers/orderer5.workspace/tls/server.crt
-    Addresses:
-        - orderer0.workspace:7050
-        - orderer1.workspace:7050
-        - orderer2.workspace:7050
+    # Addresses:
+    #     - orderer0.workspace:7050
+        # - orderer1.workspace:7050
+        # - orderer2.workspace:7050
         # - orderer4.workspace:7050
         # - orderer5.workspace:7050
     # Ending Raft
