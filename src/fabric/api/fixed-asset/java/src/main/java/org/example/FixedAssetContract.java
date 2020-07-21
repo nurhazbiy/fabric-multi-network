@@ -30,7 +30,7 @@ import org.json.JSONObject;
                 license =
                         @License(name = "Apache-2.0",
                                 url = ""),
-                                contact =  @Contact(email = "fixed-asset@example.com",
+                                contact =  @Contact(email = "fixed-asset@workspace",
                                                 name = "fixed-asset",
                                                 url = "http://somecontract.me")))
 @Default

@@ -14,27 +14,27 @@
 
 /*
 * NOTE: This implementation is a replica of the following:
-* https://github.com/hyperledger/fabric-samples/blob/release-1.1/chaincode/marbles02/node/marbles_chaincode.js
+* https://github.com/hyperledger/fabric-samples/blob/release-1.1/chaincode/wsc02/node/wsc_chaincode.js
 */
 
 // ====CHAINCODE EXECUTION SAMPLES (CLI) ==================
 
-// ==== Invoke marbles ====
-// peer chaincode invoke -C myc1 -n marbles -c '{"Args":["initMarble","marble1","blue","35","tom"]}'
-// peer chaincode invoke -C myc1 -n marbles -c '{"Args":["initMarble","marble2","red","50","tom"]}'
-// peer chaincode invoke -C myc1 -n marbles -c '{"Args":["initMarble","marble3","blue","70","tom"]}'
-// peer chaincode invoke -C myc1 -n marbles -c '{"Args":["transferMarble","marble2","jerry"]}'
-// peer chaincode invoke -C myc1 -n marbles -c '{"Args":["transferMarblesBasedOnColor","blue","jerry"]}'
-// peer chaincode invoke -C myc1 -n marbles -c '{"Args":["delete","marble1"]}'
+// ==== Invoke wsc ====
+// peer chaincode invoke -C myc1 -n wsc -c '{"Args":["initMarble","marble1","blue","35","tom"]}'
+// peer chaincode invoke -C myc1 -n wsc -c '{"Args":["initMarble","marble2","red","50","tom"]}'
+// peer chaincode invoke -C myc1 -n wsc -c '{"Args":["initMarble","marble3","blue","70","tom"]}'
+// peer chaincode invoke -C myc1 -n wsc -c '{"Args":["transferMarble","marble2","jerry"]}'
+// peer chaincode invoke -C myc1 -n wsc -c '{"Args":["transferMarblesBasedOnColor","blue","jerry"]}'
+// peer chaincode invoke -C myc1 -n wsc -c '{"Args":["delete","marble1"]}'
 
-// ==== Query marbles ====
-// peer chaincode query -C myc1 -n marbles -c '{"Args":["readMarble","marble1"]}'
-// peer chaincode query -C myc1 -n marbles -c '{"Args":["getMarblesByRange","marble1","marble3"]}'
-// peer chaincode query -C myc1 -n marbles -c '{"Args":["getHistoryForMarble","marble1"]}'
+// ==== Query wsc ====
+// peer chaincode query -C myc1 -n wsc -c '{"Args":["readMarble","marble1"]}'
+// peer chaincode query -C myc1 -n wsc -c '{"Args":["getMarblesByRange","marble1","marble3"]}'
+// peer chaincode query -C myc1 -n wsc -c '{"Args":["getHistoryForMarble","marble1"]}'
 
 // Rich Query (Only supported if CouchDB is used as state database):
-//   peer chaincode query -C myc1 -n marbles -c '{"Args":["queryMarblesByOwner","tom"]}'
-//   peer chaincode query -C myc1 -n marbles -c '{"Args":["queryMarbles","{\"selector\":{\"owner\":\"tom\"}}"]}'
+//   peer chaincode query -C myc1 -n wsc -c '{"Args":["queryMarblesByOwner","tom"]}'
+//   peer chaincode query -C myc1 -n wsc -c '{"Args":["queryMarbles","{\"selector\":{\"owner\":\"tom\"}}"]}'
 
 // INDEXES TO SUPPORT COUCHDB RICH QUERIES
 //
@@ -45,7 +45,7 @@
 // CouchDB index JSON syntax as documented at:
 // http://docs.couchdb.org/en/2.1.1/api/database/find.html#db-index
 //
-// This marbles02 example chaincode demonstrates a packaged
+// This wsc02 example chaincode demonstrates a packaged
 // index which you can find in META-INF/statedb/couchdb/indexes/indexOwner.json.
 // For deployment of chaincode to production environments, it is recommended
 // to define any indexes alongside chaincode so that the chaincode and supporting indexes
@@ -59,7 +59,7 @@
 // chaincode in the META-INF/statedb/couchdb/indexes directory, for packaging and deployment
 // to managed environments.
 //
-// In the examples below you can find index definitions that support marbles02
+// In the examples below you can find index definitions that support wsc02
 // chaincode queries, along with the syntax that you can use in development environments
 // to create the indexes in the CouchDB Fauxton interface or a curl command line utility.
 //
@@ -79,7 +79,7 @@
 // {"index":{"fields":["data.docType","data.owner"]},"ddoc":"indexOwnerDoc", "name":"indexOwner","type":"json"}
 //
 // Example curl command line to define index in the CouchDB channel_chaincode database
-// curl -i -X POST -H "Content-Type: application/json" -d "{\"index\":{\"fields\":[\"data.docType\",\"data.owner\"]},\"name\":\"indexOwner\",\"ddoc\":\"indexOwnerDoc\",\"type\":\"json\"}" http://hostname:port/myc1_marbles/_index
+// curl -i -X POST -H "Content-Type: application/json" -d "{\"index\":{\"fields\":[\"data.docType\",\"data.owner\"]},\"name\":\"indexOwner\",\"ddoc\":\"indexOwnerDoc\",\"type\":\"json\"}" http://hostname:port/myc1_wsc/_index
 //
 
 // Index for docType, owner, size (descending order).
@@ -89,13 +89,13 @@
 // {"index":{"fields":[{"data.size":"desc"},{"data.docType":"desc"},{"data.owner":"desc"}]},"ddoc":"indexSizeSortDoc", "name":"indexSizeSortDesc","type":"json"}
 //
 // Example curl command line to define index in the CouchDB channel_chaincode database
-// curl -i -X POST -H "Content-Type: application/json" -d "{\"index\":{\"fields\":[{\"data.size\":\"desc\"},{\"data.docType\":\"desc\"},{\"data.owner\":\"desc\"}]},\"ddoc\":\"indexSizeSortDoc\", \"name\":\"indexSizeSortDesc\",\"type\":\"json\"}" http://hostname:port/myc1_marbles/_index
+// curl -i -X POST -H "Content-Type: application/json" -d "{\"index\":{\"fields\":[{\"data.size\":\"desc\"},{\"data.docType\":\"desc\"},{\"data.owner\":\"desc\"}]},\"ddoc\":\"indexSizeSortDoc\", \"name\":\"indexSizeSortDesc\",\"type\":\"json\"}" http://hostname:port/myc1_wsc/_index
 
 // Rich Query with index design doc and index name specified (Only supported if CouchDB is used as state database):
-//   peer chaincode query -C myc1 -n marbles -c '{"Args":["queryMarbles","{\"selector\":{\"docType\":\"marble\",\"owner\":\"tom\"}, \"use_index\":[\"_design/indexOwnerDoc\", \"indexOwner\"]}"]}'
+//   peer chaincode query -C myc1 -n wsc -c '{"Args":["queryMarbles","{\"selector\":{\"docType\":\"marble\",\"owner\":\"tom\"}, \"use_index\":[\"_design/indexOwnerDoc\", \"indexOwner\"]}"]}'
 
 // Rich Query with index design doc specified only (Only supported if CouchDB is used as state database):
-//   peer chaincode query -C myc1 -n marbles -c '{"Args":["queryMarbles","{\"selector\":{\"docType\":{\"$eq\":\"marble\"},\"owner\":{\"$eq\":\"tom\"},\"size\":{\"$gt\":0}},\"fields\":[\"docType\",\"owner\",\"size\"],\"sort\":[{\"size\":\"desc\"}],\"use_index\":\"_design/indexSizeSortDoc\"}"]}'
+//   peer chaincode query -C myc1 -n wsc -c '{"Args":["queryMarbles","{\"selector\":{\"docType\":{\"$eq\":\"marble\"},\"owner\":{\"$eq\":\"tom\"},\"size\":{\"$gt\":0}},\"fields\":[\"docType\",\"owner\",\"size\"],\"sort\":[{\"size\":\"desc\"}],\"use_index\":\"_design/indexSizeSortDoc\"}"]}'
 
 package main
 
@@ -150,19 +150,19 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return t.initMarble(stub, args)
 	} else if function == "transferMarble" { //change owner of a specific marble
 		return t.transferMarble(stub, args)
-	} else if function == "transferMarblesBasedOnColor" { //transfer all marbles of a certain color
+	} else if function == "transferMarblesBasedOnColor" { //transfer all wsc of a certain color
 		return t.transferMarblesBasedOnColor(stub, args)
 	} else if function == "delete" { //delete a marble
 		return t.delete(stub, args)
 	} else if function == "readMarble" { //read a marble
 		return t.readMarble(stub, args)
-	} else if function == "queryMarblesByOwner" { //find marbles for owner X using rich query
+	} else if function == "queryMarblesByOwner" { //find wsc for owner X using rich query
 		return t.queryMarblesByOwner(stub, args)
-	} else if function == "queryMarbles" { //find marbles based on an ad hoc rich query
+	} else if function == "queryMarbles" { //find wsc based on an ad hoc rich query
 		return t.queryMarbles(stub, args)
 	} else if function == "getHistoryForMarble" { //get history of values for a marble
 		return t.getHistoryForMarble(stub, args)
-	} else if function == "getMarblesByRange" { //get marbles based on range query
+	} else if function == "getMarblesByRange" { //get wsc based on range query
 		return t.getMarblesByRange(stub, args)
 	}
 
@@ -230,7 +230,7 @@ func (t *SimpleChaincode) initMarble(stub shim.ChaincodeStubInterface, args []st
 		return shim.Error(err.Error())
 	}
 
-	//  ==== Index the marble to enable color-based range queries, e.g. return all blue marbles ====
+	//  ==== Index the marble to enable color-based range queries, e.g. return all blue wsc ====
 	//  An 'index' is a normal key/value entry in state.
 	//  The key is a composite key, with the elements that you want to range query on listed first.
 	//  In our case, the composite key is based on indexName~color~name.
@@ -419,7 +419,7 @@ func (t *SimpleChaincode) getMarblesByRange(stub shim.ChaincodeStubInterface, ar
 }
 
 // ==== Example: GetStateByPartialCompositeKey/RangeQuery =========================================
-// transferMarblesBasedOnColor will transfer marbles of a given color to a certain new owner.
+// transferMarblesBasedOnColor will transfer wsc of a given color to a certain new owner.
 // Uses a GetStateByPartialCompositeKey (range query) against color~name 'index'.
 // Committing peers will re-execute range queries to guarantee that result sets are stable
 // between endorsement time and commit time. The transaction is invalidated by the
@@ -465,7 +465,7 @@ func (t *SimpleChaincode) transferMarblesBasedOnColor(stub shim.ChaincodeStubInt
 		fmt.Printf("- found a marble from index:%s color:%s name:%s\n", objectType, returnedColor, returnedMarbleName)
 
 		// Now call the transfer function for the found marble.
-		// Re-use the same function that is used to transfer individual marbles
+		// Re-use the same function that is used to transfer individual wsc
 		response := t.transferMarble(stub, []string{returnedMarbleName, newOwner})
 		// if the transfer failed break out of loop and return error
 		if response.Status != shim.OK {
@@ -473,7 +473,7 @@ func (t *SimpleChaincode) transferMarblesBasedOnColor(stub shim.ChaincodeStubInt
 		}
 	}
 
-	responsePayload := fmt.Sprintf("Transferred %d %s marbles to %s", i, color, newOwner)
+	responsePayload := fmt.Sprintf("Transferred %d %s wsc to %s", i, color, newOwner)
 	fmt.Println("- end transferMarblesBasedOnColor: " + responsePayload)
 	return shim.Success([]byte(responsePayload))
 }
@@ -492,7 +492,7 @@ func (t *SimpleChaincode) transferMarblesBasedOnColor(stub shim.ChaincodeStubInt
 // ============================================================================================
 
 // ===== Example: Parameterized rich query =================================================
-// queryMarblesByOwner queries for marbles based on a passed in owner.
+// queryMarblesByOwner queries for wsc based on a passed in owner.
 // This is an example of a parameterized query where the query logic is baked into the chaincode,
 // and accepting a single query parameter (owner).
 // Only available on state databases that support rich query (e.g. CouchDB)
@@ -517,7 +517,7 @@ func (t *SimpleChaincode) queryMarblesByOwner(stub shim.ChaincodeStubInterface, 
 }
 
 // ===== Example: Ad hoc rich query ========================================================
-// queryMarbles uses a query string to perform a query for marbles.
+// queryMarbles uses a query string to perform a query for wsc.
 // Query string matching state database syntax is passed in and executed as is.
 // Supports ad hoc queries that can be defined at runtime by the client.
 // If this is not desired, follow the queryMarblesForOwner example for parameterized queries.

@@ -10,16 +10,16 @@ export VERBOSE=false
 #configuration parameters
 CHANNEL_NAME="gcchannel"
 COMPOSER_VER="0.20"
-ORG1_PEER0_ADDRESS="104.215.190.181"
-ORG1_PEER1_ADDRESS="104.215.189.131"
-ORG1_PEER2_ADDRESS="104.215.190.73"
+SUPPLIER_PEER0_ADDRESS="104.215.190.181"
+SUPPLIER_PEER1_ADDRESS="104.215.189.131"
+SUPPLIER_PEER2_ADDRESS="104.215.190.73"
 ORDERER_ADDRESS="104.215.190.181"
-ORG1_CA_ADDRESS="104.215.189.131"
-ORG1_HLF_NETWORK_NAME="bymn-org1"
+SUPPLIER_CA_ADDRESS="104.215.189.131"
+SUPPLIER_HLF_NETWORK_NAME="bymn-supplier"
 ENDORSEMENT_POLICY_FILE="endorsement_policy.json" #edorsement policy. currently requires endorsement from all the three peers
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 CRYPTO_DIR=$DIR/../crypto-config
-CRT_DIR="certificates/org1"; #out directory to store required certificates
+CRT_DIR="certificates/supplier"; #out directory to store required certificates
 BNA_FILE="tutorial-network.bna" #default bna file
 USERNAME="testuser"
 
@@ -70,8 +70,8 @@ function askProceed() {
 function networkUp() {
   # install and start bna network
   if [  -d "$CRT_DIR" ]; then
-    installNetwork $BNA_FILE $ORG1_HLF_NETWORK_NAME
-    startNetwork $BNA_FILE $ORG1_HLF_NETWORK_NAME $ENDORSEMENT_POLICY_FILE
+    installNetwork $BNA_FILE $SUPPLIER_HLF_NETWORK_NAME
+    startNetwork $BNA_FILE $SUPPLIER_HLF_NETWORK_NAME $ENDORSEMENT_POLICY_FILE
     testNetwork $BNA_FILE
   else
   echo "BNA configuration is not done yet. Run ./bymn_composer config first"
@@ -80,8 +80,8 @@ function networkUp() {
 }
 
 function networkConfig(){
-  configNetwork $CRYPTO_DIR $CRT_DIR $ORG1_PEER0_ADDRESS $ORG1_PEER1_ADDRESS $ORG1_PEER2_ADDRESS $ORDERER_ADDRESS $ORG1_CA_ADDRESS $ORG1_HLF_NETWORK_NAME $CHANNEL_NAME
-  createPeerAdmin $CRYPTO_DIR $CRT_DIR $ORG1_HLF_NETWORK_NAME
+  configNetwork $CRYPTO_DIR $CRT_DIR $SUPPLIER_PEER0_ADDRESS $SUPPLIER_PEER1_ADDRESS $SUPPLIER_PEER2_ADDRESS $ORDERER_ADDRESS $SUPPLIER_CA_ADDRESS $SUPPLIER_HLF_NETWORK_NAME $CHANNEL_NAME
+  createPeerAdmin $CRYPTO_DIR $CRT_DIR $SUPPLIER_HLF_NETWORK_NAME
 }
 
 
@@ -152,7 +152,7 @@ elif [ "${MODE}" == "up" ]; then
 elif [ "${MODE}" == "config" ]; then ## Copy certificates, configure connection.json and endorsement policy
   networkConfig
 elif [ "${MODE}" == "upgrade" ]; then ## Upgrade the network from version 1.1.x to 1.2.x
-  upgradeNetwork $BNA_FILE $ORG1_HLF_NETWORK_NAME
+  upgradeNetwork $BNA_FILE $SUPPLIER_HLF_NETWORK_NAME
 elif [ "${MODE}" == "add_network_admin" ]; then ## Upgrade the network from version 1.1.x to 1.2.x
   addNetworkAdmin $BNA_FILE $USERNAME 
     

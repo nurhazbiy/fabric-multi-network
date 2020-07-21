@@ -36,9 +36,9 @@ import com.owlike.genson.Genson;
                         name = "Apache 2.0 License",
                         url = "http://www.apache.org/licenses/LICENSE-2.0.html"),
                 contact = @Contact(
-                        email = "f.carr@example.com",
+                        email = "f.carr@workspace",
                         name = "F Carr",
-                        url = "https://hyperledger.example.com")))
+                        url = "https://hyperledger.workspace")))
 @Default
 public final class FabCar implements ContractInterface {
 

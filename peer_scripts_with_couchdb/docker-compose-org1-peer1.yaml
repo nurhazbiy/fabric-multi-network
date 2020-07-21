@@ -6,15 +6,15 @@
 version: '3.4'
 
 volumes:
-  peer1.org1.example.com:
+  peer1.supplier.workspace:
 networks:
   bymn:
     external:
       name: $SWARM_NETWORK
     
 services:
-  org1couchdb1:
-    container_name: org1couchdb1
+  suppliercouchdb1:
+    container_name: suppliercouchdb1
     image: hyperledger/fabric-couchdb
     environment:
       - COUCHDB_USER= couchdb
@@ -26,7 +26,7 @@ services:
               condition: on-failure
             placement:
                 constraints:
-                    - node.hostname == $ORG1_HOSTNAME
+                    - node.hostname == $SUPPLIER_HOSTNAME
     ports:
      - published: 5986 
        target: 5984
@@ -34,13 +34,13 @@ services:
     networks:
       bymn:
         aliases:
-          - couchdb1.org1.example.com
+          - couchdb1.supplier.workspace
 
-  org1peer1:
+  supplierpeer1:
     image: hyperledger/fabric-peer:$IMAGE_TAG
     environment:
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb1.org1.example.com:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb1.supplier.workspace:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=couchdb
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=couchdb123
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
@@ -58,11 +58,11 @@ services:
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
-      - CORE_PEER_ID=peer1.org1.example.com
-      - CORE_PEER_ADDRESS=peer1.org1.example.com:8051
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org1.example.com:7051
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org1.example.com:8051
-      - CORE_PEER_LOCALMSPID=Org1MSP
+      - CORE_PEER_ID=peer1.supplier.workspace
+      - CORE_PEER_ADDRESS=peer1.supplier.workspace:8051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.supplier.workspace:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.supplier.workspace:8051
+      - CORE_PEER_LOCALMSPID=SupplierMSP
       - CORE_VM_DOCKER_ATTACHSTDOUT=true
       - CORE_CHAINCODE_STARTUPTIMEOUT=1200s
       - CORE_CHAINCODE_EXECUTETIMEOUT=800s
@@ -72,9 +72,9 @@ services:
 
     volumes:
         - /var/run/:/host/var/run/
-        - ../crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/msp:/etc/hyperledger/fabric/msp
-        - ../crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/tls:/etc/hyperledger/fabric/tls
-        - peer1.org1.example.com:/var/hyperledger/production
+        - ../crypto-config/peerOrganizations/supplier.workspace/peers/peer1.supplier.workspace/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/supplier.workspace/peers/peer1.supplier.workspace/tls:/etc/hyperledger/fabric/tls
+        - peer1.supplier.workspace:/var/hyperledger/production
     
     deploy:
             mode: replicated
@@ -83,7 +83,7 @@ services:
               condition: on-failure
             placement:
                 constraints:
-                    - node.hostname == $ORG1_HOSTNAME
+                    - node.hostname == $SUPPLIER_HOSTNAME
 
     ports:
             - published: 8051
@@ -95,6 +95,6 @@ services:
     networks:
       bymn:
         aliases:
-          - peer1.org1.example.com
+          - peer1.supplier.workspace
  
                  

@@ -25,13 +25,13 @@ LANGUAGE=`echo "$LANGUAGE" | tr [:upper:] [:lower:]`
 COUNTER=1
 MAX_RETRY=10
 
-CC_SRC_PATH="github.com/chaincode/marbles/go/"
+CC_SRC_PATH="github.com/chaincode/wsc/go/"
 if [ "$LANGUAGE" = "node" ]; then
-	CC_SRC_PATH="/opt/gopath/src/github.com/chaincode/marbles/node/"
+	CC_SRC_PATH="/opt/gopath/src/github.com/chaincode/wsc/node/"
 fi
 
 if [ "$LANGUAGE" = "java" ]; then
-	CC_SRC_PATH="/opt/gopath/src/github.com/chaincode/marbles/java/"
+	CC_SRC_PATH="/opt/gopath/src/github.com/chaincode/wsc/java/"
 fi
 
 echo "Channel name : "$CHANNEL_NAME
@@ -44,12 +44,12 @@ createChannel() {
 
 	if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
                 set -x
-		peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx >&log.txt
+		peer channel create -o orderer.workspace:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx >&log.txt
 		res=$?
                 set +x
 	else
 				set -x
-		peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA >&log.txt
+		peer channel create -o orderer.workspace:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA >&log.txt
 		res=$?
 				set +x
 	fi
@@ -79,37 +79,37 @@ echo "Having all peers join the channel..."
 joinChannel
 
 ## Set the anchor peers for each org in the channel
-echo "Updating anchor peers for org1..."
+echo "Updating anchor peers for supplier..."
 updateAnchorPeers 0 1
-echo "Updating anchor peers for org2..."
+echo "Updating anchor peers for manufacturer..."
 updateAnchorPeers 0 2
 
 if [ "${NO_CHAINCODE}" != "true" ]; then
 
-	## Install chaincode on peer0.org1 and peer0.org2
-	echo "Installing chaincode on peer0.org1..."
+	## Install chaincode on peer0.supplier and peer0.manufacturer
+	echo "Installing chaincode on peer0.supplier..."
 	installChaincode 0 1
-	echo "Install chaincode on peer0.org2..."
+	echo "Install chaincode on peer0.manufacturer..."
 	installChaincode 0 2
 
-	# Instantiate chaincode on peer0.org2
-	echo "Instantiating chaincode on peer0.org2..."
+	# Instantiate chaincode on peer0.manufacturer
+	echo "Instantiating chaincode on peer0.manufacturer..."
 	instantiateChaincode 0 2
 
-	# Query chaincode on peer0.org1
-	echo "Querying chaincode on peer0.org1..."
+	# Query chaincode on peer0.supplier
+	echo "Querying chaincode on peer0.supplier..."
 	chaincodeQuery 0 1 100
 
-	# Invoke chaincode on peer0.org1 and peer0.org2
-	echo "Sending invoke transaction on peer0.org1 peer0.org2..."
+	# Invoke chaincode on peer0.supplier and peer0.manufacturer
+	echo "Sending invoke transaction on peer0.supplier peer0.manufacturer..."
 	chaincodeInvoke 0 1 0 2
 	
-	## Install chaincode on peer1.org2
-	echo "Installing chaincode on peer1.org2..."
+	## Install chaincode on peer1.manufacturer
+	echo "Installing chaincode on peer1.manufacturer..."
 	installChaincode 1 2
 
-	# Query on chaincode on peer1.org2, check if the result is 90
-	echo "Querying chaincode on peer1.org2..."
+	# Query on chaincode on peer1.manufacturer, check if the result is 90
+	echo "Querying chaincode on peer1.manufacturer..."
 	chaincodeQuery 1 2 90
 	
 fi

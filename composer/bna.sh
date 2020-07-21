@@ -2,15 +2,15 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 #WORKING_DIR="certificates";
 KEY1="INSERT_ORDERER0_CA_CERT";
-KEY2="INSERT_ORG1_CA_CERT"
+KEY2="INSERT_SUPPLIER_CA_CERT"
 KEY3="INSERT_ORDERER1_CA_CERT";
-ORG1_PEER0_KEY="INSERT_ORG1_PEER0_ADDRESS";
-ORG1_PEER1_KEY="INSERT_ORG1_PEER1_ADDRESS";
-ORG1_PEER2_KEY="INSERT_ORG1_PEER2_ADDRESS";
-ORG1_CA_KEY="INSERT_ORG1_CA_ADDRESS";
+SUPPLIER_PEER0_KEY="INSERT_SUPPLIER_PEER0_ADDRESS";
+SUPPLIER_PEER1_KEY="INSERT_SUPPLIER_PEER1_ADDRESS";
+SUPPLIER_PEER2_KEY="INSERT_SUPPLIER_PEER2_ADDRESS";
+SUPPLIER_CA_KEY="INSERT_SUPPLIER_CA_ADDRESS";
 ORDERER0_KEY="INSERT_ORDERER0_ADDRESS";
 ORDERER1_KEY="INSERT_ORDERER1_ADDRESS";
-HLF_NETWORK_NAME_KEY="INSERT_ORG1_HLF_NAME";
+HLF_NETWORK_NAME_KEY="INSERT_SUPPLIER_HLF_NAME";
 CHANNEL_NAME_KEY="INSERT_CHANNEL_NAME";
 
 #CRYPTO_DIR=$DIR/../crypto-config
@@ -30,7 +30,7 @@ configNetwork(){
   CRYPTO_DIR=$1
   WORKING_DIR=$2
   HLF_NAME=$8
-  ORG1=$CRYPTO_DIR/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+  SUPPLIER=$CRYPTO_DIR/peerOrganizations/supplier.workspace/users/Admin@supplier.workspace/msp
   
   echo 'Copying Certificates and required configurations. Please wait..'
   if [ -d "$DIR/$WORKING_DIR" ]
@@ -43,7 +43,7 @@ configNetwork(){
     fi
   
   # $1 -Orderer CA Certificate
-  # $2 -Org1 CA Certificate
+  # $2 -Supplier CA Certificate
   # $3 -Peer0 Address
   # $4 -Peer1 Address
   # $5 -Peer2 Address
@@ -53,23 +53,23 @@ configNetwork(){
   # $9 -Channel Name
 
   mkdir -p $DIR/$WORKING_DIR;
-  cp $CRYPTO_DIR/ordererOrganizations/example.com/orderers/orderer0.example.com/tls/ca.crt $DIR/$WORKING_DIR/orderer0-ca.crt
-  cp $CRYPTO_DIR/ordererOrganizations/example.com/orderers/orderer1.example.com/tls/ca.crt $DIR/$WORKING_DIR/orderer1-ca.crt
-  cp $CRYPTO_DIR/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt $DIR/$WORKING_DIR/org1-ca.crt
+  cp $CRYPTO_DIR/ordererOrganizations/workspace/orderers/orderer0.workspace/tls/ca.crt $DIR/$WORKING_DIR/orderer0-ca.crt
+  cp $CRYPTO_DIR/ordererOrganizations/workspace/orderers/orderer1.workspace/tls/ca.crt $DIR/$WORKING_DIR/orderer1-ca.crt
+  cp $CRYPTO_DIR/peerOrganizations/supplier.workspace/peers/peer0.supplier.workspace/tls/ca.crt $DIR/$WORKING_DIR/supplier-ca.crt
   cp $DIR/multi-network-template.json $DIR/multi-network.json
   sed -i -e "s|$KEY1|$(awk 'NF {sub(/\r/, ""); printf "%s\\\\n",$0;}' $DIR/$WORKING_DIR/orderer0-ca.crt)|g" $DIR/multi-network.json
   sed -i -e "s|$KEY3|$(awk 'NF {sub(/\r/, ""); printf "%s\\\\n",$0;}' $DIR/$WORKING_DIR/orderer1-ca.crt)|g" $DIR/multi-network.json
-  sed -i -e "s|$KEY2|$(awk 'NF {sub(/\r/, ""); printf "%s\\\\n",$0;}' $DIR/$WORKING_DIR/org1-ca.crt)|g" $DIR/multi-network.json
-  sed -i -e "s/$ORG1_PEER0_KEY/$3/g" $DIR/multi-network.json
-  sed -i -e "s/$ORG1_PEER1_KEY/$4/g" $DIR/multi-network.json
-  sed -i -e "s/$ORG1_PEER2_KEY/$5/g" $DIR/multi-network.json
+  sed -i -e "s|$KEY2|$(awk 'NF {sub(/\r/, ""); printf "%s\\\\n",$0;}' $DIR/$WORKING_DIR/supplier-ca.crt)|g" $DIR/multi-network.json
+  sed -i -e "s/$SUPPLIER_PEER0_KEY/$3/g" $DIR/multi-network.json
+  sed -i -e "s/$SUPPLIER_PEER1_KEY/$4/g" $DIR/multi-network.json
+  sed -i -e "s/$SUPPLIER_PEER2_KEY/$5/g" $DIR/multi-network.json
   sed -i -e "s/$ORDERER0_KEY/$6/g" $DIR/multi-network.json
-  sed -i -e "s/$ORG1_CA_KEY/$7/g" $DIR/multi-network.json
+  sed -i -e "s/$SUPPLIER_CA_KEY/$7/g" $DIR/multi-network.json
   sed -i -e "s/$HLF_NETWORK_NAME_KEY/$HLF_NAME/g" $DIR/multi-network.json
   sed -i -e "s/$CHANNEL_NAME_KEY/$9/g" $DIR/multi-network.json
   #sed -i -e "s/$ORDERER1_KEY/$10/g" $DIR/multi-network.json
-  cp -p $ORG1/signcerts/A*.pem $DIR/$WORKING_DIR
-  cp -p $ORG1/keystore/*_sk $DIR/$WORKING_DIR
+  cp -p $SUPPLIER/signcerts/A*.pem $DIR/$WORKING_DIR
+  cp -p $SUPPLIER/keystore/*_sk $DIR/$WORKING_DIR
   
   
   echo 'Deleting existing Peer Admin cards..'
@@ -88,7 +88,7 @@ createPeerAdmin(){
   HLF_NAME=$3
   
   echo "Creating Peer Admin card..."
-  composer card create -p $DIR/multi-network.json -u PeerAdmin -c $DIR/$WORKING_DIR/Admin@org1.example.com-cert.pem -k $DIR/$WORKING_DIR/*_sk -r PeerAdmin -r ChannelAdmin -f $DIR/$WORKING_DIR/PeerAdmin@$HLF_NAME.card
+  composer card create -p $DIR/multi-network.json -u PeerAdmin -c $DIR/$WORKING_DIR/Admin@supplier.workspace-cert.pem -k $DIR/$WORKING_DIR/*_sk -r PeerAdmin -r ChannelAdmin -f $DIR/$WORKING_DIR/PeerAdmin@$HLF_NAME.card
   verifyResult $? "Failed to create Peer Admin card.."
   echo "Importing Peer Admin card to Wallet..."
   composer card import -f $DIR/$WORKING_DIR/PeerAdmin@$HLF_NAME.card --card PeerAdmin@$HLF_NAME

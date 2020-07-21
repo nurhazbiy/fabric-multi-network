@@ -18,31 +18,31 @@ info:
   StateDB: LevelDB
 
 clients:
-  client0.org1.example.com:
+  client0.supplier.workspace:
     client:
-      organization: Org1
+      organization: Supplier
       credentialStore:
-        path: /tmp/hfc-kvs/org1
+        path: /tmp/hfc-kvs/supplier
         cryptoStore:
-          path: /tmp/hfc-cvs/org1
+          path: /tmp/hfc-cvs/supplier
       clientPrivateKey:
-        path: crypto-config/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore/c12e31b58a3711d38d873fa6d0c9825516d109a310d44ee77e3271088a0f6c2a_sk
+        path: crypto-config/peerOrganizations/supplier.workspace/users/User1@supplier.workspace/msp/keystore/c608fcfc211eb9f79ee9f7e669cefa28310f67023369db25e98cd3143255f525_sk
       clientSignedCert:
-        path: crypto-config/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/signcerts/User1@org1.example.com-cert.pem
+        path: crypto-config/peerOrganizations/supplier.workspace/users/User1@supplier.workspace/msp/signcerts/User1@supplier.workspace-cert.pem
 
-  client0.org2.example.com:
+  client0.manufacturer.workspace:
     client:
-      organization: Org2
+      organization: Manufacturer
       credentialStore:
-        path: /tmp/hfc-kvs/org2
+        path: /tmp/hfc-kvs/manufacturer
         cryptoStore:
-          path: /tmp/hfc-cvs/org2
+          path: /tmp/hfc-cvs/manufacturer
       clientPrivateKey:
-        path: crypto-config/peerOrganizations/org2.example.com/users/User1@org2.example.com/msp/keystore/0a34eaa7d0194b65f9291a5d198d047adcdc5d0d8e2d4d89cf423ae87bd03fa2_sk
+        path: crypto-config/peerOrganizations/manufacturer.workspace/users/User1@manufacturer.workspace/msp/keystore/608d784efe239c46147bbacc79de30d87d4c6b3ae9b45935420109730c9e8744_sk
       clientSignedCert:
-        path: crypto-config/peerOrganizations/org2.example.com/users/User1@org2.example.com/msp/signcerts/User1@org2.example.com-cert.pem
+        path: crypto-config/peerOrganizations/manufacturer.workspace/users/User1@manufacturer.workspace/msp/signcerts/User1@manufacturer.workspace-cert.pem
   
-  # client0.customer.example.com:
+  # client0.customer.workspace:
   #   client:
   #     organization: Customer
   #     credentialStore:
@@ -50,32 +50,32 @@ clients:
   #       cryptoStore:
   #         path: /tmp/hfc-cvs/Customer
   #     clientPrivateKey:
-  #       path: crypto-config/peerOrganizations/customer.example.com/users/User1@customer.example.com/msp/keystore/C3_PRIVATE_KEY
+  #       path: crypto-config/peerOrganizations/customer.workspace/users/User1@customer.workspace/msp/keystore/C3_PRIVATE_KEY
   #     clientSignedCert:
-  #       path: crypto-config/peerOrganizations/customer.example.com/users/User1@customer.example.com/msp/signcerts/User1@customer.example.com-cert.pem
+  #       path: crypto-config/peerOrganizations/customer.workspace/users/User1@customer.workspace/msp/signcerts/User1@customer.workspace-cert.pem
   
 channels:
   mychannel:
     configBinary: ./channel-artifacts/channel.tx
     created: false
     orderers:
-    - orderer0.example.com
-    - orderer1.example.com
-    - orderer2.example.com
-    # - orderer4.example.com
-    # - orderer5.example.com
+    - orderer0.workspace
+    - orderer1.workspace
+    - orderer2.workspace
+    # - orderer4.workspace
+    # - orderer5.workspace
     peers:
-      peer0.org1.example.com:
+      peer0.supplier.workspace:
         eventSource: true
-      peer1.org1.example.com:
+      peer1.supplier.workspace:
         eventSource: true
-      peer0.org2.example.com:
+      peer0.manufacturer.workspace:
         eventSource: true
-      peer1.org2.example.com:
+      peer1.manufacturer.workspace:
         eventSource: true
-      # peer0.customer.example.com:
+      # peer0.customer.workspace:
       #   eventSource: true
-      # peer1.customer.example.com:
+      # peer1.customer.workspace:
       #   eventSource: true
 
     chaincodes:
@@ -83,12 +83,12 @@ channels:
     #   version: v0
     #   language: golang
     #   path: chaincode_example02/go/
-      # metadataPath: src/fabric/samples/marbles/go/metadata
-    - id: marbles
+      # metadataPath: src/fabric/samples/wsc/go/metadata
+    - id: wsc
       version: v0
       language: golang
-      path: fabric/samples/marbles/go
-      metadataPath: src/fabric/samples/marbles/go/metadata
+      path: fabric/wsc/go
+      metadataPath: src/fabric/wsc/go/metadata
     # - id: drm
     #   version: v0
     #   language: golang
@@ -103,140 +103,140 @@ channels:
     #   path: fabric/scenario/smallbank/go
 
 organizations:
-  Org1:
-    mspid: Org1MSP
+  Supplier:
+    mspid: SupplierMSP
     peers:
-    - peer0.org1.example.com
-    - peer1.org1.example.com
+    - peer0.supplier.workspace
+    - peer1.supplier.workspace
     certificateAuthorities:
-    - ca.org1.example.com
+    - ca.supplier.workspace
     adminPrivateKey:
-      path: crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/221544cefab70d0b8eb50e9601c93bc186e948f1926e4d762ad6f2db66cefef1_sk
+      path: crypto-config/peerOrganizations/supplier.workspace/users/Admin@supplier.workspace/msp/keystore/c65c8ebc0acd3840fc41e6f8beb5e2c0ace07da2439c29b9ce203d0a0f200cbb_sk
     signedCert:
-      path: crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem
+      path: crypto-config/peerOrganizations/supplier.workspace/users/Admin@supplier.workspace/msp/signcerts/Admin@supplier.workspace-cert.pem
 
-  Org2:
-    mspid: Org2MSP
+  Manufacturer:
+    mspid: ManufacturerMSP
     peers:
-    - peer0.org2.example.com
-    - peer1.org2.example.com
+    - peer0.manufacturer.workspace
+    - peer1.manufacturer.workspace
     certificateAuthorities:
-    - ca.org2.example.com
+    - ca.manufacturer.workspace
     adminPrivateKey:
-      path: crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore/d57395592a629b3deb350f2e0f41e14cde373a6eead38e0f07f56bc30661f94c_sk
+      path: crypto-config/peerOrganizations/manufacturer.workspace/users/Admin@manufacturer.workspace/msp/keystore/573c16f936b55918bff46b13c07c30743d0e1331847bee3257dcaa2f8f7dc47d_sk
     signedCert:
-      path: crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/signcerts/Admin@org2.example.com-cert.pem
+      path: crypto-config/peerOrganizations/manufacturer.workspace/users/Admin@manufacturer.workspace/msp/signcerts/Admin@manufacturer.workspace-cert.pem
 
   # Customer:
   #   mspid: CustomerMSP
   #   peers:
-  #   - peer0.customer.example.com
-  #   - peer1.customer.example.com
+  #   - peer0.customer.workspace
+  #   - peer1.customer.workspace
   #   certificateAuthorities:
   #   - ca_customer
   #   adminPrivateKey:
-  #     path: crypto-config/peerOrganizations/customer.example.com/users/Admin@customer.example.com/msp/keystore/A3_PRIVATE_KEY
+  #     path: crypto-config/peerOrganizations/customer.workspace/users/Admin@customer.workspace/msp/keystore/A3_PRIVATE_KEY
   #   signedCert:
-  #     path: crypto-config/peerOrganizations/customer.example.com/users/Admin@customer.example.com/msp/signcerts/Admin@customer.example.com-cert.pem
+  #     path: crypto-config/peerOrganizations/customer.workspace/users/Admin@customer.workspace/msp/signcerts/Admin@customer.workspace-cert.pem
 
 orderers:
-  orderer0.example.com:
+  orderer0.workspace:
     url: grpcs://localhost:7050
     grpcOptions:
-      ssl-target-name-override: orderer0.example.com
+      ssl-target-name-override: orderer0.workspace
     tlsCACerts:
-        path: crypto-config/ordererOrganizations/example.com/orderers/orderer0.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
-  orderer1.example.com:
+        path: crypto-config/ordererOrganizations/workspace/orderers/orderer0.workspace/msp/tlscacerts/tlsca.workspace-cert.pem
+  orderer1.workspace:
     url: grpcs://localhost:8050
     grpcOptions:
-      ssl-target-name-override: orderer1.example.com
+      ssl-target-name-override: orderer1.workspace
     tlsCACerts:
-        path: crypto-config/ordererOrganizations/example.com/orderers/orderer1.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
-  orderer2.example.com:
+        path: crypto-config/ordererOrganizations/workspace/orderers/orderer1.workspace/msp/tlscacerts/tlsca.workspace-cert.pem
+  orderer2.workspace:
     url: grpcs://localhost:9050
     grpcOptions:
-      ssl-target-name-override: orderer2.example.com
+      ssl-target-name-override: orderer2.workspace
     tlsCACerts:
-        path: crypto-config/ordererOrganizations/example.com/orderers/orderer2.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
-  # orderer4.example.com:
+        path: crypto-config/ordererOrganizations/workspace/orderers/orderer2.workspace/msp/tlscacerts/tlsca.workspace-cert.pem
+  # orderer4.workspace:
   #   url: grpcs://localhost:10050
   #   grpcOptions:
-  #     ssl-target-name-override: orderer4.example.com
+  #     ssl-target-name-override: orderer4.workspace
   #   tlsCACerts:
-  #       path: crypto-config/ordererOrganizations/example.com/orderers/orderer4.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
-  # orderer5.example.com:
+  #       path: crypto-config/ordererOrganizations/workspace/orderers/orderer4.workspace/msp/tlscacerts/tlsca.workspace-cert.pem
+  # orderer5.workspace:
   #   url: grpcs://localhost:11050
   #   grpcOptions:
-  #     ssl-target-name-override: orderer5.example.com
+  #     ssl-target-name-override: orderer5.workspace
   #   tlsCACerts:
-  #       path: crypto-config/ordererOrganizations/example.com/orderers/orderer5.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+  #       path: crypto-config/ordererOrganizations/workspace/orderers/orderer5.workspace/msp/tlscacerts/tlsca.workspace-cert.pem
 
 peers:
-  peer0.org1.example.com:
+  peer0.supplier.workspace:
     url: grpcs://localhost:7051
     grpcOptions:
-      ssl-target-name-override: peer0.org1.example.com
+      ssl-target-name-override: peer0.supplier.workspace
       grpc.keepalive_time_ms: 600000
     tlsCACerts:
-        path: crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp/tlscacerts/tlsca.org1.example.com-cert.pem
+        path: crypto-config/peerOrganizations/supplier.workspace/peers/peer0.supplier.workspace/msp/tlscacerts/tlsca.supplier.workspace-cert.pem
 
-  peer0.org2.example.com:
+  peer0.manufacturer.workspace:
     url: grpcs://localhost:9051
     grpcOptions:
-      ssl-target-name-override: peer0.org2.example.com
+      ssl-target-name-override: peer0.manufacturer.workspace
       grpc.keepalive_time_ms: 600000
     tlsCACerts:
-        path: crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/msp/tlscacerts/tlsca.org2.example.com-cert.pem
+        path: crypto-config/peerOrganizations/manufacturer.workspace/peers/peer0.manufacturer.workspace/msp/tlscacerts/tlsca.manufacturer.workspace-cert.pem
 
-  # peer0.customer.example.com:
+  # peer0.customer.workspace:
   #   url: grpcs://localhost:9051
   #   grpcOptions:
-  #     ssl-target-name-override: peer0.customer.example.com
+  #     ssl-target-name-override: peer0.customer.workspace
   #     grpc.keepalive_time_ms: 600000
   #   tlsCACerts:
-  #       path: crypto-config/peerOrganizations/customer.example.com/peers/peer0.customer.example.com/msp/tlscacerts/tlsca.customer.example.com-cert.pem
+  #       path: crypto-config/peerOrganizations/customer.workspace/peers/peer0.customer.workspace/msp/tlscacerts/tlsca.customer.workspace-cert.pem
 
-  peer1.org1.example.com:
+  peer1.supplier.workspace:
     url: grpcs://localhost:8051
     grpcOptions:
-      ssl-target-name-override: peer1.org1.example.com
+      ssl-target-name-override: peer1.supplier.workspace
       grpc.keepalive_time_ms: 600000
     tlsCACerts:
-        path: crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/msp/tlscacerts/tlsca.org1.example.com-cert.pem
+        path: crypto-config/peerOrganizations/supplier.workspace/peers/peer1.supplier.workspace/msp/tlscacerts/tlsca.supplier.workspace-cert.pem
 
-  peer1.org2.example.com:
+  peer1.manufacturer.workspace:
     url: grpcs://localhost:10051
     grpcOptions:
-      ssl-target-name-override: peer1.org2.example.com
+      ssl-target-name-override: peer1.manufacturer.workspace
       grpc.keepalive_time_ms: 600000
     tlsCACerts:
-        path: crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/msp/tlscacerts/tlsca.org2.example.com-cert.pem
+        path: crypto-config/peerOrganizations/manufacturer.workspace/peers/peer1.manufacturer.workspace/msp/tlscacerts/tlsca.manufacturer.workspace-cert.pem
 
-  # peer1.customer.example.com:
+  # peer1.customer.workspace:
   #   url: grpcs://localhost:12051
   #   grpcOptions:
-  #     ssl-target-name-override: peer1.customer.example.com
+  #     ssl-target-name-override: peer1.customer.workspace
   #     grpc.keepalive_time_ms: 600000
   #   tlsCACerts:
-  #       path: crypto-config/peerOrganizations/customer.example.com/peers/peer1.customer.example.com/msp/tlscacerts/tlsca.customer.example.com-cert.pem
+  #       path: crypto-config/peerOrganizations/customer.workspace/peers/peer1.customer.workspace/msp/tlscacerts/tlsca.customer.workspace-cert.pem
 
 certificateAuthorities:
-  ca.org1.example.com:
+  ca.supplier.workspace:
     url: https://localhost:7054
     httpOptions:
       verify: false
     tlsCACerts:
-        path: crypto-config/peerOrganizations/org1.example.com/ca/ca.org1.example.com-cert.pem
+        path: crypto-config/peerOrganizations/supplier.workspace/ca/ca.supplier.workspace-cert.pem
     registrar:
     - enrollId: admin
       enrollSecret: adminpw
 
-  ca.org2.example.com:
+  ca.manufacturer.workspace:
     url: https://localhost:8054
     httpOptions:
       verify: false
     tlsCACerts:
-        path: crypto-config/peerOrganizations/org2.example.com/ca/ca.org2.example.com-cert.pem
+        path: crypto-config/peerOrganizations/manufacturer.workspace/ca/ca.manufacturer.workspace-cert.pem
     registrar:
     - enrollId: admin
       enrollSecret: adminpw
@@ -246,7 +246,7 @@ certificateAuthorities:
   #   httpOptions:
   #     verify: false
   #   tlsCACerts:
-  #       path: crypto-config/peerOrganizations/customer.example.com/ca/ca.customer.example.com-cert.pem
+  #       path: crypto-config/peerOrganizations/customer.workspace/ca/ca.customer.workspace-cert.pem
   #   registrar:
   #   - enrollId: admin
   #     enrollSecret: adminpw

@@ -6,31 +6,31 @@ SPDX-License-Identifier: Apache-2.0
 
 // ====CHAINCODE EXECUTION SAMPLES (CLI) ==================
 
-// ==== Invoke marbles, pass private data as base64 encoded bytes in transient map ====
+// ==== Invoke wsc, pass private data as base64 encoded bytes in transient map ====
 //
 // export MARBLE=$(echo -n "{\"name\":\"marble1\",\"color\":\"blue\",\"size\":35,\"owner\":\"tom\",\"price\":99}" | base64)
-// peer chaincode invoke -C mychannel -n marblesp -c '{"Args":["initMarble"]}' --transient "{\"marble\":\"$MARBLE\"}"
+// peer chaincode invoke -C mychannel -n wscp -c '{"Args":["initMarble"]}' --transient "{\"marble\":\"$MARBLE\"}"
 //
 // export MARBLE=$(echo -n "{\"name\":\"marble2\",\"color\":\"red\",\"size\":50,\"owner\":\"tom\",\"price\":102}" | base64)
-// peer chaincode invoke -C mychannel -n marblesp -c '{"Args":["initMarble"]}' --transient "{\"marble\":\"$MARBLE\"}"
+// peer chaincode invoke -C mychannel -n wscp -c '{"Args":["initMarble"]}' --transient "{\"marble\":\"$MARBLE\"}"
 //
 // export MARBLE=$(echo -n "{\"name\":\"marble3\",\"color\":\"blue\",\"size\":70,\"owner\":\"tom\",\"price\":103}" | base64)
-// peer chaincode invoke -C mychannel -n marblesp -c '{"Args":["initMarble"]}' --transient "{\"marble\":\"$MARBLE\"}"
+// peer chaincode invoke -C mychannel -n wscp -c '{"Args":["initMarble"]}' --transient "{\"marble\":\"$MARBLE\"}"
 //
 // export MARBLE_OWNER=$(echo -n "{\"name\":\"marble2\",\"owner\":\"jerry\"}" | base64)
-// peer chaincode invoke -C mychannel -n marblesp -c '{"Args":["transferMarble"]}' --transient "{\"marble_owner\":\"$MARBLE_OWNER\"}"
+// peer chaincode invoke -C mychannel -n wscp -c '{"Args":["transferMarble"]}' --transient "{\"marble_owner\":\"$MARBLE_OWNER\"}"
 //
 // export MARBLE_DELETE=$(echo -n "{\"name\":\"marble1\"}" | base64)
-// peer chaincode invoke -C mychannel -n marblesp -c '{"Args":["delete"]}' --transient "{\"marble_delete\":\"$MARBLE_DELETE\"}"
+// peer chaincode invoke -C mychannel -n wscp -c '{"Args":["delete"]}' --transient "{\"marble_delete\":\"$MARBLE_DELETE\"}"
 
-// ==== Query marbles, since queries are not recorded on chain we don't need to hide private data in transient map ====
-// peer chaincode query -C mychannel -n marblesp -c '{"Args":["readMarble","marble1"]}'
-// peer chaincode query -C mychannel -n marblesp -c '{"Args":["readMarblePrivateDetails","marble1"]}'
-// peer chaincode query -C mychannel -n marblesp -c '{"Args":["getMarblesByRange","marble1","marble4"]}'
+// ==== Query wsc, since queries are not recorded on chain we don't need to hide private data in transient map ====
+// peer chaincode query -C mychannel -n wscp -c '{"Args":["readMarble","marble1"]}'
+// peer chaincode query -C mychannel -n wscp -c '{"Args":["readMarblePrivateDetails","marble1"]}'
+// peer chaincode query -C mychannel -n wscp -c '{"Args":["getMarblesByRange","marble1","marble4"]}'
 //
 // Rich Query (Only supported if CouchDB is used as state database):
-//   peer chaincode query -C mychannel -n marblesp -c '{"Args":["queryMarblesByOwner","tom"]}'
-//   peer chaincode query -C mychannel -n marblesp -c '{"Args":["queryMarbles","{\"selector\":{\"owner\":\"tom\"}}"]}'
+//   peer chaincode query -C mychannel -n wscp -c '{"Args":["queryMarblesByOwner","tom"]}'
+//   peer chaincode query -C mychannel -n wscp -c '{"Args":["queryMarbles","{\"selector\":{\"owner\":\"tom\"}}"]}'
 
 // INDEXES TO SUPPORT COUCHDB RICH QUERIES
 //
@@ -42,7 +42,7 @@ SPDX-License-Identifier: Apache-2.0
 // definition formatted in JSON following the CouchDB index JSON syntax as documented at:
 // http://docs.couchdb.org/en/2.1.1/api/database/find.html#db-index
 //
-// This marbles02_private example chaincode demonstrates a packaged index which you
+// This wsc02_private example chaincode demonstrates a packaged index which you
 // can find in META-INF/statedb/couchdb/collection/collectionMarbles/indexes/indexOwner.json.
 // For deployment of chaincode to production environments, it is recommended
 // to define any indexes alongside chaincode so that the chaincode and supporting indexes
@@ -57,7 +57,7 @@ SPDX-License-Identifier: Apache-2.0
 // META-INF/statedb/couchdb/collections/<collection_name>/indexes directory, for packaging
 // and deployment to managed environments.
 //
-// In the examples below you can find index definitions that support marbles02_private
+// In the examples below you can find index definitions that support wsc02_private
 // chaincode queries, along with the syntax that you can use in development environments
 // to create the indexes in the CouchDB Fauxton interface.
 //
@@ -83,10 +83,10 @@ SPDX-License-Identifier: Apache-2.0
 // {"index":{"fields":[{"data.size":"desc"},{"data.docType":"desc"},{"data.owner":"desc"}]},"ddoc":"indexSizeSortDoc", "name":"indexSizeSortDesc","type":"json"}
 
 // Rich Query with index design doc and index name specified (Only supported if CouchDB is used as state database):
-//   peer chaincode query -C mychannel -n marblesp -c '{"Args":["queryMarbles","{\"selector\":{\"docType\":\"marble\",\"owner\":\"tom\"}, \"use_index\":[\"_design/indexOwnerDoc\", \"indexOwner\"]}"]}'
+//   peer chaincode query -C mychannel -n wscp -c '{"Args":["queryMarbles","{\"selector\":{\"docType\":\"marble\",\"owner\":\"tom\"}, \"use_index\":[\"_design/indexOwnerDoc\", \"indexOwner\"]}"]}'
 
 // Rich Query with index design doc specified only (Only supported if CouchDB is used as state database):
-//   peer chaincode query -C mychannel -n marblesp -c '{"Args":["queryMarbles","{\"selector\":{\"docType\":{\"$eq\":\"marble\"},\"owner\":{\"$eq\":\"tom\"},\"size\":{\"$gt\":0}},\"fields\":[\"docType\",\"owner\",\"size\"],\"sort\":[{\"size\":\"desc\"}],\"use_index\":\"_design/indexSizeSortDoc\"}"]}'
+//   peer chaincode query -C mychannel -n wscp -c '{"Args":["queryMarbles","{\"selector\":{\"docType\":{\"$eq\":\"marble\"},\"owner\":{\"$eq\":\"tom\"},\"size\":{\"$gt\":0}},\"fields\":[\"docType\",\"owner\",\"size\"],\"sort\":[{\"size\":\"desc\"}],\"use_index\":\"_design/indexSizeSortDoc\"}"]}'
 
 package main
 
@@ -158,13 +158,13 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		//delete a marble
 		return t.delete(stub, args)
 	case "queryMarblesByOwner":
-		//find marbles for owner X using rich query
+		//find wsc for owner X using rich query
 		return t.queryMarblesByOwner(stub, args)
 	case "queryMarbles":
-		//find marbles based on an ad hoc rich query
+		//find wsc based on an ad hoc rich query
 		return t.queryMarbles(stub, args)
 	case "getMarblesByRange":
-		//get marbles based on range query
+		//get wsc based on range query
 		return t.getMarblesByRange(stub, args)
 	default:
 		//error
@@ -272,7 +272,7 @@ func (t *SimpleChaincode) initMarble(stub shim.ChaincodeStubInterface, args []st
 		return shim.Error(err.Error())
 	}
 
-	//  ==== Index the marble to enable color-based range queries, e.g. return all blue marbles ====
+	//  ==== Index the marble to enable color-based range queries, e.g. return all blue wsc ====
 	//  An 'index' is a normal key/value entry in state.
 	//  The key is a composite key, with the elements that you want to range query on listed first.
 	//  In our case, the composite key is based on indexName~color~name.
@@ -555,7 +555,7 @@ func (t *SimpleChaincode) getMarblesByRange(stub shim.ChaincodeStubInterface, ar
 // ============================================================================================
 
 // ===== Example: Parameterized rich query =================================================
-// queryMarblesByOwner queries for marbles based on a passed in owner.
+// queryMarblesByOwner queries for wsc based on a passed in owner.
 // This is an example of a parameterized query where the query logic is baked into the chaincode,
 // and accepting a single query parameter (owner).
 // Only available on state databases that support rich query (e.g. CouchDB)
@@ -580,7 +580,7 @@ func (t *SimpleChaincode) queryMarblesByOwner(stub shim.ChaincodeStubInterface, 
 }
 
 // ===== Example: Ad hoc rich query ========================================================
-// queryMarbles uses a query string to perform a query for marbles.
+// queryMarbles uses a query string to perform a query for wsc.
 // Query string matching state database syntax is passed in and executed as is.
 // Supports ad hoc queries that can be defined at runtime by the client.
 // If this is not desired, follow the queryMarblesForOwner example for parameterized queries.

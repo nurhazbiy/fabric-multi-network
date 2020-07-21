@@ -3,7 +3,7 @@
         {
             "role": {
                 "name": "member",
-                "mspId": "Org1MSP"
+                "mspId": "SupplierMSP"
             }
         }
     ],

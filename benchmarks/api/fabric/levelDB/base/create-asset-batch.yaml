@@ -85,7 +85,7 @@ monitor:
     url: "http://localhost:9090"
     push_url: "http://localhost:9091"
     metrics:
-      ignore: [prometheus, pushGateway, cadvisor, grafana, node-exporter, ca.org1.example.com, ca.org2.example.com]
+      ignore: [prometheus, pushGateway, cadvisor, grafana, node-exporter, ca.supplier.workspace, ca.manufacturer.workspace]
       include:
         Avg Memory (MB):
           query: sum(container_memory_rss{name=~".+"}) by (name)

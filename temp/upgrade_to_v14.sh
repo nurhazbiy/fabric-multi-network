@@ -68,17 +68,17 @@ addCapabilityToChannel() {
                       setOrdererGlobals
                 elif [ $GROUP == "channel" ]; then
                       # Modifying the channel group requires a majority of application admins and the orderer admin to sign.
-                      # Sign with PeerOrg1.Admin
+                      # Sign with PeerSupplier.Admin
                       signConfigtxAsPeerOrg 1 config_update_in_envelope.pb
-                      # Sign with PeerOrg2.Admin
+                      # Sign with PeerManufacturer.Admin
                       signConfigtxAsPeerOrg 2 config_update_in_envelope.pb
                       # Prepare to sign the update as the OrdererOrg.Admin
                       setOrdererGlobals
                 elif [ $GROUP == "application" ]; then
                       # Modifying the application group requires a majority of application admins to sign.
-                      # Sign with PeerOrg1.Admin
+                      # Sign with PeerSupplier.Admin
                       signConfigtxAsPeerOrg 1 config_update_in_envelope.pb
-                      # Prepare to sign the update as the PeerOrg2.Admin
+                      # Prepare to sign the update as the PeerManufacturer.Admin
                       setGlobals 0 2
                 fi
         else
@@ -89,12 +89,12 @@ addCapabilityToChannel() {
 
         if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
                 set -x
-                peer channel update -f config_update_in_envelope.pb -c $CH_NAME -o orderer.example.com:7050 --cafile $ORDERER_CA
+                peer channel update -f config_update_in_envelope.pb -c $CH_NAME -o orderer.workspace:7050 --cafile $ORDERER_CA
                 res=$?
                 set +x
         else
                 set -x
-                peer channel update -f config_update_in_envelope.pb -c $CH_NAME -o orderer.example.com:7050 --tls true --cafile $ORDERER_CA
+                peer channel update -f config_update_in_envelope.pb -c $CH_NAME -o orderer.workspace:7050 --tls true --cafile $ORDERER_CA
                 res=$?
                 set +x
         fi
@@ -135,20 +135,20 @@ addCapabilityToChannel $CHANNEL_NAME application
 
 sleep $DELAY
 
-#Query on chaincode on Peer0/Org1
-echo "Querying chaincode on org1/peer0..."
+#Query on chaincode on Peer0/Supplier
+echo "Querying chaincode on supplier/peer0..."
 chaincodeQuery 0 1 90
 
 sleep $DELAY
 
-#Invoke on chaincode on Peer0/Org1
-echo "Sending invoke transaction on org1/peer0..."
+#Invoke on chaincode on Peer0/Supplier
+echo "Sending invoke transaction on supplier/peer0..."
 chaincodeInvoke 0 1 0 2
 
 sleep $DELAY
 
-#Query on chaincode on Peer0/Org1
-echo "Querying chaincode on org1/peer0..."
+#Query on chaincode on Peer0/Supplier
+echo "Querying chaincode on supplier/peer0..."
 chaincodeQuery 0 1 80
 
 echo

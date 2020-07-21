@@ -1,7 +1,7 @@
 # Set workspace as caliper-benchmarks root
 WORKSPACE=$(cd "$(dirname '$1')/../../.." &>/dev/null && printf "%s/%s" "$PWD" "${1##*/}")
 # Nominate a target network
-NETWORK=networks/fabric/v2/v2.0.0/2org1peercouchdb_raft/api/fabric-api-solo-node-prometheus.yaml
+NETWORK=networks/fabric/v2/v2.0.0/2supplierpeercouchdb_raft/api/fabric-api-solo-node-prometheus.yaml
 # nominate a target API test
 TARGET=couchDB
 # Available benchmarks

@@ -38,7 +38,7 @@ fi
 
 echo "Fetching channel config block from orderer..."
 set -x
-peer channel fetch 0 $CHANNEL_NAME.block -o orderer.example.com:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_CA >&log.txt
+peer channel fetch 0 $CHANNEL_NAME.block -o orderer.workspace:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_CA >&log.txt
 res=$?
 set +x
 cat log.txt

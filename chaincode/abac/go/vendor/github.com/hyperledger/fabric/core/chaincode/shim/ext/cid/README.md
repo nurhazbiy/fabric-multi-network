@@ -90,7 +90,7 @@ is not using an X509 certificate.
 
 Sometimes you may need to perform multiple operations in order to make an access
 decision.  For example, the following demonstrates how to grant access to
-identities with MSP *org1MSP* and *attr1* OR with MSP *org1MSP* and *attr2*.
+identities with MSP *supplierMSP* and *attr1* OR with MSP *supplierMSP* and *attr2*.
 
 ```
 // Get the client ID object
@@ -103,9 +103,9 @@ if err != nil {
    // Handle error
 }
 switch mspid {
-   case "org1MSP":
+   case "supplierMSP":
       err = id.AssertAttributeValue("attr1", "true")
-   case "org2MSP":
+   case "manufacturerMSP":
       err = id.AssertAttributeValue("attr2", "true")
    default:
       err = errors.New("Wrong MSP")
@@ -138,7 +138,7 @@ with fabric-ca:
      to the enrollment certificate by default.
 
      ```
-     fabric-ca-client register --id.name user1 --id.secret user1pw --id.type user --id.affiliation org1 --id.attrs 'app1Admin=true:ecert,email=user1@gmail.com'
+     fabric-ca-client register --id.name user1 --id.secret user1pw --id.type user --id.affiliation supplier --id.attrs 'app1Admin=true:ecert,email=user1@gmail.com'
      ```
 
   2. When you enroll an identity, you may request that one or more attributes

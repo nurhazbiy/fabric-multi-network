@@ -36,8 +36,9 @@ export ORDERER1_HOSTNAME="docker-desktop"
 export ORDERER2_HOSTNAME="docker-desktop"
 export ORDERER3_HOSTNAME="docker-desktop"
 export ORDERER4_HOSTNAME="docker-desktop"
-export ORG1_HOSTNAME="docker-desktop"
-export ORG2_HOSTNAME="docker-desktop"
+export SUPPLIER_HOSTNAME="docker-desktop"
+export MANUFACTURER_HOSTNAME="docker-desktop"
+export CUSTOMER_HOSTNAME="docker-desktop"
 export SWARM_NETWORK="fabric"
 export DOCKER_STACK="fabric"
 export KAFKA0_HOSTNAME="docker-desktop"
@@ -220,7 +221,7 @@ function startDockerServices(){
 function execCli() {
   checkPrereqs
   
-  docker exec $(docker ps --filter "name=org1cli" -aq) scripts/script.sh $CHANNEL_NAME $CLI_DELAY $LANGUAGE $CLI_TIMEOUT $VERBOSE
+  docker exec $(docker ps --filter "name=suppliercli" -aq) scripts/script.sh $CHANNEL_NAME $CLI_DELAY $LANGUAGE $CLI_TIMEOUT $VERBOSE
   if [ $? -ne 0 ]; then
     echo "ERROR !!!! Test failed"
     exit 1
@@ -232,7 +233,7 @@ function execCli() {
 
 # Tear down running network
 function networkDown() {
-  # stop org3 containers also in addition to org1 and org2, in case we were running sample to add org3
+  # stop org3 containers also in addition to supplier and manufacturer, in case we were running sample to add org3
   docker stack rm $DOCKER_STACK
   #docker network rm $DOCKER_STACK
   # Don't remove the generated artifacts -- note, the ledgers are always removed
@@ -274,16 +275,16 @@ function replacePrivateKey() {
   CURRENT_DIR=$PWD
   TEMPLATE_DIR=$PWD/templates
   CA_SCRIPTS_DIR=$PWD/ca_scripts
-  # Copy the org1 & org2 templates to the files that will be modified to add the private key
+  # Copy the supplier & manufacturer templates to the files that will be modified to add the private key
   cp $TEMPLATE_DIR/docker-compose-ca-template.yaml $CA_SCRIPTS_DIR/docker-compose-ca.yaml
   
   # The next steps will replace the template's contents with the
   # actual values of the private key file names for the two CAs.
-  cd crypto-config/peerOrganizations/org1.example.com/ca/
+  cd crypto-config/peerOrganizations/supplier.workspace/ca/
   PRIV_KEY=$(ls *_sk)
   cd "$CURRENT_DIR"
   sed $OPTS "s/CA1_PRIVATE_KEY/${PRIV_KEY}/g" ca_scripts/docker-compose-ca.yaml
-   cd crypto-config/peerOrganizations/org2.example.com/ca/
+   cd crypto-config/peerOrganizations/manufacturer.workspace/ca/
   PRIV_KEY=$(ls *_sk)
   cd "$CURRENT_DIR"
   sed $OPTS "s/CA2_PRIVATE_KEY/${PRIV_KEY}/g" ca_scripts/docker-compose-ca.yaml
@@ -335,7 +336,7 @@ function generateCerts() {
     exit 1
   fi
   echo
-  #echo "Generate CCP files for Org1 and Org2"
+  #echo "Generate CCP files for Supplier and Manufacturer"
   #./ccp-generate.sh
 }
 
@@ -351,7 +352,7 @@ function generateCerts() {
 #
 # Configtxgen consumes a file - ``configtx.yaml`` - that contains the definitions
 # for the sample network. There are three members - one Orderer Org (``OrdererOrg``)
-# and two Peer Orgs (``Org1`` & ``Org2``) each managing and maintaining two peer nodes.
+# and two Peer Orgs (``Supplier`` & ``Manufacturer``) each managing and maintaining two peer nodes.
 # This file also specifies a consortium - ``SampleConsortium`` - consisting of our
 # two Peer Orgs.  Pay specific attention to the "Profiles" section at the top of
 # this file.  You will notice that we have two unique headers. One for the orderer genesis
@@ -359,7 +360,7 @@ function generateCerts() {
 # These headers are important, as we will pass them in as arguments when we create
 # our artifacts.  This file also contains two additional specifications that are worth
 # noting.  Firstly, we specify the anchor peers for each Peer Org
-# (``peer0.org1.example.com`` & ``peer0.org2.example.com``).  Secondly, we point to
+# (``peer0.supplier.workspace`` & ``peer0.manufacturer.workspace``).  Secondly, we point to
 # the location of the MSP directory for each member, in turn allowing us to store the
 # root certificates for each Org in the orderer genesis block.  This is a critical
 # concept. Now any network entity communicating with the ordering service can have
@@ -425,28 +426,28 @@ function generateChannelArtifacts() {
 
   echo
   echo "#################################################################"
-  echo "#######    Generating anchor peer update for Org1MSP   ##########"
+  echo "#######    Generating anchor peer update for SupplierMSP   ##########"
   echo "#################################################################"
   set -x
-  configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/Org1MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org1MSP
+  configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/SupplierMSPanchors.tx -channelID $CHANNEL_NAME -asOrg SupplierMSP
   res=$?
   set +x
   if [ $res -ne 0 ]; then
-    echo "Failed to generate anchor peer update for Org1MSP..."
+    echo "Failed to generate anchor peer update for SupplierMSP..."
     exit 1
   fi
 
   echo
   echo "#################################################################"
-  echo "#######    Generating anchor peer update for Org2MSP   ##########"
+  echo "#######    Generating anchor peer update for ManufacturerMSP   ##########"
   echo "#################################################################"
   set -x
   configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate \
-    ./channel-artifacts/Org2MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org2MSP
+    ./channel-artifacts/ManufacturerMSPanchors.tx -channelID $CHANNEL_NAME -asOrg ManufacturerMSP
   res=$?
   set +x
   if [ $res -ne 0 ]; then
-    echo "Failed to generate anchor peer update for Org2MSP..."
+    echo "Failed to generate anchor peer update for ManufacturerMSP..."
     exit 1
   fi
   echo
@@ -455,15 +456,15 @@ function generateChannelArtifacts() {
 
   #echo
   #echo "#################################################################"
-  #echo "#######    Generating anchor peer update for Org2MSP   ##########"
+  #echo "#######    Generating anchor peer update for ManufacturerMSP   ##########"
   #echo "#################################################################"
   #set -x
   #configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate \
-  #  ./channel-artifacts/Org2MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org2MSP
+  #  ./channel-artifacts/ManufacturerMSPanchors.tx -channelID $CHANNEL_NAME -asOrg ManufacturerMSP
   #res=$?
   #set +x
   #if [ $res -ne 0 ]; then
-  #  echo "Failed to generate anchor peer update for Org2MSP..."
+  #  echo "Failed to generate anchor peer update for ManufacturerMSP..."
   #  exit 1
   #fi
   #echo
@@ -485,32 +486,32 @@ function runCaliper() {
   # actual values of the private key file names for the two CAs.
   CURRENT_DIR=$PWD
 
-  cd crypto-config/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore/
+  cd crypto-config/peerOrganizations/supplier.workspace/users/User1@supplier.workspace/msp/keystore/
   PRIV_KEY=$(ls *_sk)
   cd "$CURRENT_DIR"
   sed $OPTS "s/C1_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-caliper.yaml
 
-  cd crypto-config/peerOrganizations/org2.example.com/users/User1@org2.example.com/msp/keystore/
+  cd crypto-config/peerOrganizations/manufacturer.workspace/users/User1@manufacturer.workspace/msp/keystore/
   PRIV_KEY=$(ls *_sk)
   cd "$CURRENT_DIR"
   sed $OPTS "s/C2_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-caliper.yaml
 
-  # cd crypto-config/peerOrganizations/customer.example.com/users/User1@customer.example.com/msp/keystore/
+  # cd crypto-config/peerOrganizations/customer.workspace/users/User1@customer.workspace/msp/keystore/
   # PRIV_KEY=$(ls *_sk)
   # cd "$CURRENT_DIR"
   # sed $OPTS "s/C3_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-caliper.yaml
 
-  cd crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/
+  cd crypto-config/peerOrganizations/supplier.workspace/users/Admin@supplier.workspace/msp/keystore/
   PRIV_KEY=$(ls *_sk)
   cd "$CURRENT_DIR"
   sed $OPTS "s/A1_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-caliper.yaml
 
-  cd crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore/
+  cd crypto-config/peerOrganizations/manufacturer.workspace/users/Admin@manufacturer.workspace/msp/keystore/
   PRIV_KEY=$(ls *_sk)
   cd "$CURRENT_DIR"
   sed $OPTS "s/A2_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-caliper.yaml
 
-  # cd crypto-config/peerOrganizations/customer.example.com/users/Admin@customer.example.com/msp/keystore/
+  # cd crypto-config/peerOrganizations/customer.workspace/users/Admin@customer.workspace/msp/keystore/
   # PRIV_KEY=$(ls *_sk)
   # cd "$CURRENT_DIR"
   # sed $OPTS "s/A3_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-caliper.yaml
@@ -521,7 +522,7 @@ function runCaliper() {
   fi
 
   # export CALIPER_FABRIC_SKIPCREATECHANNEL_MYCHANNEL=true
-  npx caliper launch master --caliper-bind-sut fabric:1.4.6 --caliper-workspace . --caliper-benchconfig ./benchmarks/wsc/config.yaml  --caliper-networkconfig docker-compose-caliper.yaml
+  npx caliper launch master --caliper-bind-sut fabric:1.4.6 --caliper-workspace . --caliper-benchconfig ./benchmarks/fabric/wsc/config.yaml  --caliper-networkconfig docker-compose-caliper.yaml
 }
 
 

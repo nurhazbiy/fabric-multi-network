@@ -11,7 +11,7 @@
 version: '3.4'
 
 volumes:
-  zookeeper0.example.com:
+  zookeeper0.workspace:
 networks:
   bymn:
     external:
@@ -28,7 +28,7 @@ services:
       # server has. There are two port numbers `nnnnn`. The first is what
       # followers use to connect to the leader, while the second is for leader
       # election.
-      - ZOO_SERVERS=server.1=0.0.0.0:2888:3888 server.2=zookeeper1.example.com:2888:3888  server.3=zookeeper2.example.com:2888:3888
+      - ZOO_SERVERS=server.1=0.0.0.0:2888:3888 server.2=zookeeper1.workspace:2888:3888  server.3=zookeeper2.workspace:2888:3888
       - ZOO_MY_ID=1
     restart: always
 
@@ -54,5 +54,5 @@ services:
     networks:
       bymn:
         aliases:
-          - zookeeper0.example.com
+          - zookeeper0.workspace
            

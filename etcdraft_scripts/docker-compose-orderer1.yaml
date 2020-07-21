@@ -11,7 +11,7 @@
 version: '3.4'
 
 volumes:
-  orderer1.example.com:
+  orderer1.workspace:
   
 networks:
   bymn:
@@ -48,9 +48,9 @@ services:
     command: orderer
     volumes:
     - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
-    - ../crypto-config/ordererOrganizations/example.com/orderers/orderer1.example.com/msp:/var/hyperledger/orderer/msp
-    - ../crypto-config/ordererOrganizations/example.com/orderers/orderer1.example.com/tls/:/var/hyperledger/orderer/tls
-    - orderer1.example.com:/var/hyperledger/production/orderer
+    - ../crypto-config/ordererOrganizations/workspace/orderers/orderer1.workspace/msp:/var/hyperledger/orderer/msp
+    - ../crypto-config/ordererOrganizations/workspace/orderers/orderer1.workspace/tls/:/var/hyperledger/orderer/tls
+    - orderer1.workspace:/var/hyperledger/production/orderer
     deploy:
             mode: replicated
             replicas: 1
@@ -67,5 +67,5 @@ services:
     networks:
       bymn:
         aliases:
-          - orderer1.example.com
+          - orderer1.workspace
            

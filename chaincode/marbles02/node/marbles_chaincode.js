@@ -6,26 +6,26 @@
 
 // ====CHAINCODE EXECUTION SAMPLES (CLI) ==================
 
-// ==== Invoke marbles ====
-// peer chaincode invoke -C myc1 -n marbles -c '{"Args":["initMarble","marble1","blue","35","tom"]}'
-// peer chaincode invoke -C myc1 -n marbles -c '{"Args":["initMarble","marble2","red","50","tom"]}'
-// peer chaincode invoke -C myc1 -n marbles -c '{"Args":["initMarble","marble3","blue","70","tom"]}'
-// peer chaincode invoke -C myc1 -n marbles -c '{"Args":["transferMarble","marble2","jerry"]}'
-// peer chaincode invoke -C myc1 -n marbles -c '{"Args":["transferMarblesBasedOnColor","blue","jerry"]}'
-// peer chaincode invoke -C myc1 -n marbles -c '{"Args":["delete","marble1"]}'
+// ==== Invoke wsc ====
+// peer chaincode invoke -C myc1 -n wsc -c '{"Args":["initMarble","marble1","blue","35","tom"]}'
+// peer chaincode invoke -C myc1 -n wsc -c '{"Args":["initMarble","marble2","red","50","tom"]}'
+// peer chaincode invoke -C myc1 -n wsc -c '{"Args":["initMarble","marble3","blue","70","tom"]}'
+// peer chaincode invoke -C myc1 -n wsc -c '{"Args":["transferMarble","marble2","jerry"]}'
+// peer chaincode invoke -C myc1 -n wsc -c '{"Args":["transferMarblesBasedOnColor","blue","jerry"]}'
+// peer chaincode invoke -C myc1 -n wsc -c '{"Args":["delete","marble1"]}'
 
-// ==== Query marbles ====
-// peer chaincode query -C myc1 -n marbles -c '{"Args":["readMarble","marble1"]}'
-// peer chaincode query -C myc1 -n marbles -c '{"Args":["getMarblesByRange","marble1","marble3"]}'
-// peer chaincode query -C myc1 -n marbles -c '{"Args":["getHistoryForMarble","marble1"]}'
-// peer chaincode query -C myc1 -n marbles -c '{"Args":["getMarblesByRangeWithPagination","marble1","marble3","3",""]}'
+// ==== Query wsc ====
+// peer chaincode query -C myc1 -n wsc -c '{"Args":["readMarble","marble1"]}'
+// peer chaincode query -C myc1 -n wsc -c '{"Args":["getMarblesByRange","marble1","marble3"]}'
+// peer chaincode query -C myc1 -n wsc -c '{"Args":["getHistoryForMarble","marble1"]}'
+// peer chaincode query -C myc1 -n wsc -c '{"Args":["getMarblesByRangeWithPagination","marble1","marble3","3",""]}'
 
 // Rich Query (Only supported if CouchDB is used as state database):
-// peer chaincode query -C myc1 -n marbles -c '{"Args":["queryMarblesByOwner","tom"]}'
-// peer chaincode query -C myc1 -n marbles -c '{"Args":["queryMarbles","{\"selector\":{\"owner\":\"tom\"}}"]}'
+// peer chaincode query -C myc1 -n wsc -c '{"Args":["queryMarblesByOwner","tom"]}'
+// peer chaincode query -C myc1 -n wsc -c '{"Args":["queryMarbles","{\"selector\":{\"owner\":\"tom\"}}"]}'
 
 // Rich Query with Pagination (Only supported if CouchDB is used as state database):
-// peer chaincode query -C myc1 -n marbles -c '{"Args":["queryMarblesWithPagination","{\"selector\":{\"owner\":\"tom\"}}","3",""]}'
+// peer chaincode query -C myc1 -n wsc -c '{"Args":["queryMarblesWithPagination","{\"selector\":{\"owner\":\"tom\"}}","3",""]}'
 
 'use strict';
 const shim = require('fabric-shim');
@@ -241,7 +241,7 @@ let Chaincode = class {
   }
 
   // ==== Example: GetStateByPartialCompositeKey/RangeQuery =========================================
-  // transferMarblesBasedOnColor will transfer marbles of a given color to a certain new owner.
+  // transferMarblesBasedOnColor will transfer wsc of a given color to a certain new owner.
   // Uses a GetStateByPartialCompositeKey (range query) against color~name 'index'.
   // Committing peers will re-execute range queries to guarantee that result sets are stable
   // between endorsement time and commit time. The transaction is invalidated by the
@@ -286,17 +286,17 @@ let Chaincode = class {
       console.info(util.format('- found a marble from index:%s color:%s name:%s\n', objectType, returnedColor, returnedMarbleName));
 
       // Now call the transfer function for the found marble.
-      // Re-use the same function that is used to transfer individual marbles
+      // Re-use the same function that is used to transfer individual wsc
       let response = await method(stub, [returnedMarbleName, newOwner]);
     }
 
-    let responsePayload = util.format('Transferred %s marbles to %s', color, newOwner);
+    let responsePayload = util.format('Transferred %s wsc to %s', color, newOwner);
     console.info('- end transferMarblesBasedOnColor: ' + responsePayload);
   }
 
 
   // ===== Example: Parameterized rich query =================================================
-  // queryMarblesByOwner queries for marbles based on a passed in owner.
+  // queryMarblesByOwner queries for wsc based on a passed in owner.
   // This is an example of a parameterized query where the query logic is baked into the chaincode,
   // and accepting a single query parameter (owner).
   // Only available on state databases that support rich query (e.g. CouchDB)
@@ -319,7 +319,7 @@ let Chaincode = class {
   }
 
   // ===== Example: Ad hoc rich query ========================================================
-  // queryMarbles uses a query string to perform a query for marbles.
+  // queryMarbles uses a query string to perform a query for wsc.
   // Query string matching state database syntax is passed in and executed as is.
   // Supports ad hoc queries that can be defined at runtime by the client.
   // If this is not desired, follow the queryMarblesForOwner example for parameterized queries.

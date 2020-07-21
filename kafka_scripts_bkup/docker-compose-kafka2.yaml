@@ -11,7 +11,7 @@
 version: '3.4'
 
 volumes:
-  kafka2.example.com:
+  kafka2.workspace:
 networks:
   bymn:
     external:
@@ -78,7 +78,7 @@ services:
       #
       # zookeper.connect
       # Point to the set of Zookeeper nodes comprising a ZK ensemble.
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper0.example.com:2181,zookeeper1.example.com:2181,zookeeper2.example.com:2181
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper0.workspace:2181,zookeeper1.workspace:2181,zookeeper2.workspace:2181
       #
       # zookeeper.connection.timeout.ms
       # The max time that the client waits to establish a connection to
@@ -109,5 +109,5 @@ services:
     networks:
       bymn:
         aliases:
-          - kafka2.example.com
+          - kafka2.workspace
            
