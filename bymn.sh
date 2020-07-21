@@ -252,7 +252,7 @@ function networkDown() {
     docker system prune
     docker volume prune
    #docker swarm leave -f
-  #  docker rmi $(docker images -a -q) -f
+   docker rmi $(docker images -a -q) -f
     docker service rm $(docker service ls -q)               
     docker rm $(docker ps -aq) -f
    
