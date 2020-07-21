@@ -521,7 +521,7 @@ function runCaliper() {
   fi
 
   # export CALIPER_FABRIC_SKIPCREATECHANNEL_MYCHANNEL=true
-  npx caliper launch master --caliper-bind-sut fabric:1.4.6 --caliper-workspace . --caliper-benchconfig ./benchmarks/samples/fabric/marbles/config.yaml  --caliper-networkconfig docker-compose-caliper.yaml
+  npx caliper launch master --caliper-bind-sut fabric:1.4.6 --caliper-workspace . --caliper-benchconfig ./benchmarks/wsc/config.yaml  --caliper-networkconfig docker-compose-caliper.yaml
 }
 
 
