@@ -46,7 +46,7 @@ services:
       - CORE_CHAINCODE_EXECUTETIMEOUT=800s
 
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
-    command: ls
+    command: sleep 20h
 
     volumes:
         - /var/run/:/host/var/run/
