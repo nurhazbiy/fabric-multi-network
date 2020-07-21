@@ -141,19 +141,19 @@ organizations:
 
 orderers:
   orderer0.workspace:
-    url: grpcs://localhost:7050
+    url: grpcs://54.206.102.205:7050
     grpcOptions:
       ssl-target-name-override: orderer0.workspace
     tlsCACerts:
         path: crypto-config/ordererOrganizations/workspace/orderers/orderer0.workspace/msp/tlscacerts/tlsca.workspace-cert.pem
   orderer1.workspace:
-    url: grpcs://localhost:8050
+    url: grpcs://54.206.102.205:8050
     grpcOptions:
       ssl-target-name-override: orderer1.workspace
     tlsCACerts:
         path: crypto-config/ordererOrganizations/workspace/orderers/orderer1.workspace/msp/tlscacerts/tlsca.workspace-cert.pem
   orderer2.workspace:
-    url: grpcs://localhost:9050
+    url: grpcs://54.206.102.205:9050
     grpcOptions:
       ssl-target-name-override: orderer2.workspace
     tlsCACerts:
@@ -173,7 +173,7 @@ orderers:
 
 peers:
   peer0.supplier.workspace:
-    url: grpcs://localhost:7051
+    url: grpcs://13.210.196.249:7051
     grpcOptions:
       ssl-target-name-override: peer0.supplier.workspace
       grpc.keepalive_time_ms: 600000
@@ -181,7 +181,7 @@ peers:
         path: crypto-config/peerOrganizations/supplier.workspace/peers/peer0.supplier.workspace/msp/tlscacerts/tlsca.supplier.workspace-cert.pem
 
   peer0.manufacturer.workspace:
-    url: grpcs://localhost:9051
+    url: grpcs://13.211.103.120:9051
     grpcOptions:
       ssl-target-name-override: peer0.manufacturer.workspace
       grpc.keepalive_time_ms: 600000
@@ -197,7 +197,7 @@ peers:
   #       path: crypto-config/peerOrganizations/customer.workspace/peers/peer0.customer.workspace/msp/tlscacerts/tlsca.customer.workspace-cert.pem
 
   peer1.supplier.workspace:
-    url: grpcs://localhost:8051
+    url: grpcs://13.210.196.249:8051
     grpcOptions:
       ssl-target-name-override: peer1.supplier.workspace
       grpc.keepalive_time_ms: 600000
@@ -205,7 +205,7 @@ peers:
         path: crypto-config/peerOrganizations/supplier.workspace/peers/peer1.supplier.workspace/msp/tlscacerts/tlsca.supplier.workspace-cert.pem
 
   peer1.manufacturer.workspace:
-    url: grpcs://localhost:10051
+    url: grpcs://13.211.103.120:10051
     grpcOptions:
       ssl-target-name-override: peer1.manufacturer.workspace
       grpc.keepalive_time_ms: 600000
@@ -222,7 +222,7 @@ peers:
 
 certificateAuthorities:
   ca.supplier.workspace:
-    url: https://localhost:7054
+    url: https://13.210.196.249:7054
     httpOptions:
       verify: false
     tlsCACerts:
@@ -232,7 +232,7 @@ certificateAuthorities:
       enrollSecret: adminpw
 
   ca.manufacturer.workspace:
-    url: https://localhost:8054
+    url: https://13.211.103.120:8054
     httpOptions:
       verify: false
     tlsCACerts:
